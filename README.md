@@ -1,4 +1,5 @@
 <div align="center">
+  <img src="https://blessing-studio.cn/wp-content/uploads/2025/02/IMG_2337.png" style="width: 200px; height: 200px;"/>
   
   # Bless.Monet
 
