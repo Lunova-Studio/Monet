@@ -1,0 +1,67 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<Color x:Key="PrimaryColor0">Red</Color>
+	<Color x:Key="PrimaryColor10">#00FFFFFF</Color>
+	<Color x:Key="PrimaryColor20">#00FFFFFF</Color>
+	<Color x:Key="PrimaryColor30">#00FFFFFF</Color>
+	<Color x:Key="PrimaryColor40">#00FFFFFF</Color>
+	<Color x:Key="PrimaryColor50">#00FFFFFF</Color>
+	<Color x:Key="PrimaryColor60">#00FFFFFF</Color>
+	<Color x:Key="PrimaryColor70">#00FFFFFF</Color>
+	<Color x:Key="PrimaryColor80">#00FFFFFF</Color>
+	<Color x:Key="PrimaryColor90">#00FFFFFF</Color>
+	<Color x:Key="PrimaryColor95">#00FFFFFF</Color>
+	<Color x:Key="PrimaryColor100">#00FFFFFF</Color>
+
+	<Color x:Key="SecondaryColor0">#00FFFFFF</Color>
+	<Color x:Key="SecondaryColor10">#00FFFFFF</Color>
+	<Color x:Key="SecondaryColor20">#00FFFFFF</Color>
+	<Color x:Key="SecondaryColor30">#00FFFFFF</Color>
+	<Color x:Key="SecondaryColor40">#00FFFFFF</Color>
+	<Color x:Key="SecondaryColor50">#00FFFFFF</Color>
+	<Color x:Key="SecondaryColor60">#00FFFFFF</Color>
+	<Color x:Key="SecondaryColor70">#00FFFFFF</Color>
+	<Color x:Key="SecondaryColor80">#00FFFFFF</Color>
+	<Color x:Key="SecondaryColor90">#00FFFFFF</Color>
+	<Color x:Key="SecondaryColor95">#00FFFFFF</Color>
+	<Color x:Key="SecondaryColor100">#00FFFFFF</Color>
+
+	<Color x:Key="TertiaryColor0">#00FFFFFF</Color>
+	<Color x:Key="TertiaryColor10">#00FFFFFF</Color>
+	<Color x:Key="TertiaryColor20">#00FFFFFF</Color>
+	<Color x:Key="TertiaryColor30">#00FFFFFF</Color>
+	<Color x:Key="TertiaryColor40">#00FFFFFF</Color>
+	<Color x:Key="TertiaryColor50">#00FFFFFF</Color>
+	<Color x:Key="TertiaryColor60">#00FFFFFF</Color>
+	<Color x:Key="TertiaryColor70">#00FFFFFF</Color>
+	<Color x:Key="TertiaryColor80">#00FFFFFF</Color>
+	<Color x:Key="TertiaryColor90">#00FFFFFF</Color>
+	<Color x:Key="TertiaryColor95">#00FFFFFF</Color>
+	<Color x:Key="TertiaryColor100">#00FFFFFF</Color>
+
+	<Color x:Key="NeutralColor0">#00FFFFFF</Color>
+	<Color x:Key="NeutralColor10">#00FFFFFF</Color>
+	<Color x:Key="NeutralColor20">#00FFFFFF</Color>
+	<Color x:Key="NeutralColor30">#00FFFFFF</Color>
+	<Color x:Key="NeutralColor40">#00FFFFFF</Color>
+	<Color x:Key="NeutralColor50">#00FFFFFF</Color>
+	<Color x:Key="NeutralColor60">#00FFFFFF</Color>
+	<Color x:Key="NeutralColor70">#00FFFFFF</Color>
+	<Color x:Key="NeutralColor80">#00FFFFFF</Color>
+	<Color x:Key="NeutralColor90">#00FFFFFF</Color>
+	<Color x:Key="NeutralColor95">#00FFFFFF</Color>
+	<Color x:Key="NeutralColor100">#00FFFFFF</Color>
+
+	<Color x:Key="NeutralVariantColor0">#00FFFFFF</Color>
+	<Color x:Key="NeutralVariantColor10">#00FFFFFF</Color>
+	<Color x:Key="NeutralVariantColor20">#00FFFFFF</Color>
+	<Color x:Key="NeutralVariantColor30">#00FFFFFF</Color>
+	<Color x:Key="NeutralVariantColor40">#00FFFFFF</Color>
+	<Color x:Key="NeutralVariantColor50">#00FFFFFF</Color>
+	<Color x:Key="NeutralVariantColor60">#00FFFFFF</Color>
+	<Color x:Key="NeutralVariantColor70">#00FFFFFF</Color>
+	<Color x:Key="NeutralVariantColor80">#00FFFFFF</Color>
+	<Color x:Key="NeutralVariantColor90">#00FFFFFF</Color>
+	<Color x:Key="NeutralVariantColor95">#00FFFFFF</Color>
+	<Color x:Key="NeutralVariantColor100">#00FFFFFF</Color>
+</ResourceDictionary>

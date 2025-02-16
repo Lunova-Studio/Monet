@@ -1,0 +1,10 @@
+<Application xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 x:Class="Bless.Monet.Test.App"
+			 RequestedThemeVariant="Default"
+			 xmlns:bm="using:Bless.Monet">
+	<Application.Styles>
+		<bm:Monet PrimaryColor="Blue"/>
+		<FluentTheme DensityStyle="Compact"/>
+	</Application.Styles>
+</Application>

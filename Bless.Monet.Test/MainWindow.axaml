@@ -1,0 +1,638 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" Width="1018" Height="860"
+        x:Class="Bless.Monet.Test.MainWindow"
+        Title="Bless.Monet.Test"
+		Background="{DynamicResource BackgroundBrush}">
+	<Window.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.ThemeDictionaries>
+				<ResourceDictionary x:Key="Light">
+					<!--A1-->
+					<SolidColorBrush x:Key="PrimaryBrush" Color="{DynamicResource PrimaryColor40}"/>
+					<SolidColorBrush x:Key="OnPrimaryBrush" Color="{DynamicResource PrimaryColor100}"/>
+
+					<SolidColorBrush x:Key="PrimaryContainerBrush" Color="{DynamicResource PrimaryColor90}"/>
+					<SolidColorBrush x:Key="OnPrimaryContainerBrush" Color="{DynamicResource PrimaryColor10}"/>
+
+					<!--A2-->
+					<SolidColorBrush x:Key="SecondaryBrush" Color="{DynamicResource SecondaryColor40}"/>
+					<SolidColorBrush x:Key="OnSecondaryBrush" Color="{DynamicResource SecondaryColor100}"/>
+
+					<SolidColorBrush x:Key="SecondaryContainerBrush" Color="{DynamicResource SecondaryColor90}"/>
+					<SolidColorBrush x:Key="OnSecondaryContainerBrush" Color="{DynamicResource SecondaryColor10}"/>
+
+					<!--A3-->
+					<SolidColorBrush x:Key="TertiaryBrush" Color="{DynamicResource TertiaryColor40}"/>
+					<SolidColorBrush x:Key="OnTertiaryBrush" Color="{DynamicResource TertiaryColor100}"/>
+
+					<SolidColorBrush x:Key="TertiaryContainerBrush" Color="{DynamicResource TertiaryColor90}"/>
+					<SolidColorBrush x:Key="OnTertiaryContainerBrush" Color="{DynamicResource TertiaryColor10}"/>
+					
+					<SolidColorBrush x:Key="OnSurfaceBrush" Color="{DynamicResource NectralColor10}"/>
+					<SolidColorBrush x:Key="BackgroundBrush" Color="#fffbff"/>
+				</ResourceDictionary>
+				
+				<ResourceDictionary x:Key="Dark">
+					<!--A1-->
+					<SolidColorBrush x:Key="PrimaryBrush" Color="{DynamicResource PrimaryColor80}"/>
+					<SolidColorBrush x:Key="OnPrimaryBrush" Color="{DynamicResource PrimaryColor20}"/>
+
+					<SolidColorBrush x:Key="PrimaryContainerBrush" Color="{DynamicResource PrimaryColor30}"/>
+					<SolidColorBrush x:Key="OnPrimaryContainerBrush" Color="{DynamicResource PrimaryColor90}"/>
+					
+					<!--A2-->
+					<SolidColorBrush x:Key="SecondaryBrush" Color="{DynamicResource SecondaryColor80}"/>
+					<SolidColorBrush x:Key="OnSecondaryBrush" Color="{DynamicResource SecondaryColor20}"/>
+
+					<SolidColorBrush x:Key="SecondaryContainerBrush" Color="{DynamicResource SecondaryColor30}"/>
+					<SolidColorBrush x:Key="OnSecondaryContainerBrush" Color="{DynamicResource SecondaryColor90}"/>
+
+					<!--A3-->
+					<SolidColorBrush x:Key="TertiaryBrush" Color="{DynamicResource TertiaryColor80}"/>
+					<SolidColorBrush x:Key="OnTertiaryBrush" Color="{DynamicResource TertiaryColor20}"/>
+
+					<SolidColorBrush x:Key="TertiaryContainerBrush" Color="{DynamicResource TertiaryColor30}"/>
+					<SolidColorBrush x:Key="OnTertiaryContainerBrush" Color="{DynamicResource TertiaryColor90}"/>
+					
+					<SolidColorBrush x:Key="OnSurfaceBrush" Color="{DynamicResource NectralColor90}"/>
+					<SolidColorBrush x:Key="BackgroundBrush" Color="#1a1110"/>
+				</ResourceDictionary>
+			</ResourceDictionary.ThemeDictionaries>
+		</ResourceDictionary>
+	</Window.Resources>
+
+	<Window.Styles>
+		<Style Selector="Button.c1">
+			<Setter Property="Width" Value="320"/>
+			<Setter Property="Margin" Value="0 0 8 8"/>
+			<Setter Property="Transitions">
+				<Transitions>
+					<BrushTransition Duration="0:0:.15"
+									 Property="Background"/>
+
+					<BrushTransition Duration="0:0:.15"
+									 Property="BorderBrush"/>
+				</Transitions>
+			</Setter>
+			
+			<Setter Property="Template">
+				<ControlTemplate>
+					<StackPanel>
+						<Border Height="120"
+								Width="{TemplateBinding Width}"
+								Transitions="{TemplateBinding Transitions}"
+								Background="{TemplateBinding Background}">
+							<TextBlock Text="{TemplateBinding Content}"
+									   FontSize="14"
+									   Padding="12"
+									   Foreground="{TemplateBinding BorderBrush}"/>
+						</Border>
+
+						<Border Height="40"
+								Width="{TemplateBinding Width}"
+								Transitions="{TemplateBinding Transitions}"
+								Background="{TemplateBinding BorderBrush}">
+							<TextBlock Text="On Background"
+									   FontSize="14"
+									   Padding="8 0"
+									   HorizontalAlignment="Left"
+									   VerticalAlignment="Center"
+									   Foreground="{TemplateBinding Background}"/>
+						</Border>
+					</StackPanel>
+				</ControlTemplate>
+			</Setter>
+		</Style>
+	</Window.Styles>
+	
+	<StackPanel Spacing="8"
+				Margin="16">
+		<TextBlock Text="暗色主题"
+				   FontWeight="Bold"
+				   FontSize="36"
+				   Name="Theme"
+				   Margin="0 0 0 24"
+				   HorizontalAlignment="Left"
+				   Foreground="{DynamicResource OnSurfaceBrush}"/>
+
+		<WrapPanel Orientation="Horizontal">
+			<Button Classes="c1"
+					Content="Primary"
+					Background="{DynamicResource PrimaryBrush}"
+					BorderBrush="{DynamicResource OnPrimaryBrush}"/>
+
+			<Button Classes="c1"
+					Content="Secondary"
+					Background="{DynamicResource SecondaryBrush}"
+					BorderBrush="{DynamicResource OnSecondaryBrush}"/>
+
+			<Button Classes="c1"
+					Content="Tertiary"
+					Background="{DynamicResource TertiaryBrush}"
+					BorderBrush="{DynamicResource OnTertiaryBrush}"/>
+
+			<Button Classes="c1"
+					Content="PrimaryContainer"
+					Background="{DynamicResource PrimaryContainerBrush}"
+					BorderBrush="{DynamicResource OnPrimaryContainerBrush}"/>
+
+			<Button Classes="c1"
+					Content="SecondaryContainer"
+					Background="{DynamicResource SecondaryContainerBrush}"
+					BorderBrush="{DynamicResource OnSecondaryContainerBrush}"/>
+
+			<Button Classes="c1"
+					Content="SecondaryContainer"
+					Background="{DynamicResource TertiaryContainerBrush}"
+					BorderBrush="{DynamicResource OnTertiaryContainerBrush}"/>
+		</WrapPanel>
+	</StackPanel>
+	
+	<!--<StackPanel Margin="16"
+				Orientation="Vertical"
+				Spacing="8">
+		<TextBlock Text="暗色主题"
+				   FontWeight="Bold"
+				   FontSize="36"
+				   Name="Theme"
+				   Margin="0 0 0 24"
+				   HorizontalAlignment="Left"
+				   Foreground="{DynamicResource PrimaryColor90}"/>
+
+		<TextBlock Text="PrimaryColor"
+				   FontWeight="Bold"
+				   FontSize="24"
+				   Padding="16 4"
+				   HorizontalAlignment="Left"
+				   Background="{DynamicResource PrimaryColor90}"
+				   Foreground="{DynamicResource PrimaryColor40}"/>
+
+		<Border BorderBrush="Orange"
+				BorderThickness="2">
+			<StackPanel Width="880" Orientation="Horizontal">
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource PrimaryColor0}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource PrimaryColor10}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource PrimaryColor20}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource PrimaryColor30}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource PrimaryColor40}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource PrimaryColor50}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource PrimaryColor60}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource PrimaryColor70}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource PrimaryColor80}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource PrimaryColor90}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource PrimaryColor95}"/>
+					</Border.Background>
+				</Border>
+			</StackPanel>
+		</Border>
+
+		<TextBlock Text="SecondaryColor"
+				   FontWeight="Bold"
+				   FontSize="24"
+				   Padding="16 4"
+				   HorizontalAlignment="Left"
+				   Background="{DynamicResource PrimaryColor90}"
+				   Foreground="{DynamicResource PrimaryColor40}"/>
+
+		<Border BorderBrush="Orange"
+				BorderThickness="2">
+			<StackPanel Width="880" Orientation="Horizontal">
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource SecondaryColor0}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource SecondaryColor10}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource SecondaryColor20}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource SecondaryColor30}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource SecondaryColor40}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource SecondaryColor50}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource SecondaryColor60}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource SecondaryColor70}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource SecondaryColor80}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource SecondaryColor90}"/>
+					</Border.Background>
+				</Border>
+					
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource SecondaryColor100}"/>
+					</Border.Background>
+				</Border>
+			</StackPanel>
+		</Border>
+
+
+		<TextBlock Text="TertiaryColor"
+				   FontWeight="Bold"
+				   FontSize="24"
+				   Padding="16 4"
+				   HorizontalAlignment="Left"
+				   Background="{DynamicResource PrimaryColor90}"
+				   Foreground="{DynamicResource PrimaryColor40}"/>
+
+		<Border BorderBrush="Orange"
+				BorderThickness="2">
+			<StackPanel Width="880" Orientation="Horizontal">
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource TertiaryColor0}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource TertiaryColor10}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource TertiaryColor20}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource TertiaryColor30}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource TertiaryColor40}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource TertiaryColor50}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource TertiaryColor60}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource TertiaryColor70}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource TertiaryColor80}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource TertiaryColor90}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource TertiaryColor100}"/>
+					</Border.Background>
+				</Border>
+			</StackPanel>
+		</Border>
+
+		<TextBlock Text="NectralColor"
+				   FontWeight="Bold"
+				   FontSize="24"
+				   Padding="16 4"
+				   HorizontalAlignment="Left"
+				   Background="{DynamicResource PrimaryColor90}"
+				   Foreground="{DynamicResource PrimaryColor40}"/>
+
+		<Border BorderBrush="Orange"
+				BorderThickness="2">
+			<StackPanel Width="880" Orientation="Horizontal">
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource NectralColor0}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource NectralColor10}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource NectralColor20}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource NectralColor30}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource NectralColor40}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource NectralColor50}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource NectralColor60}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource NectralColor70}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource NectralColor80}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource NectralColor90}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource NectralColor100}"/>
+					</Border.Background>
+				</Border>
+			</StackPanel>
+		</Border>
+
+		<TextBlock Text="NectralVariantColor"
+				   FontWeight="Bold"
+				   FontSize="24"
+				   Padding="16 4"
+				   HorizontalAlignment="Left"
+				   Background="{DynamicResource PrimaryColor90}"
+				   Foreground="{DynamicResource PrimaryColor40}"/>
+
+		<Border BorderBrush="Orange"
+				BorderThickness="2">
+			<StackPanel Width="880" Orientation="Horizontal">
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource NectralVariantColor0}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource NectralVariantColor10}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource NectralVariantColor20}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource NectralVariantColor30}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource NectralVariantColor40}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource NectralVariantColor50}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource NectralVariantColor60}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource NectralVariantColor70}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource NectralVariantColor80}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource NectralVariantColor90}"/>
+					</Border.Background>
+				</Border>
+
+				<Border Height="20" Width="80">
+					<Border.Background>
+						<SolidColorBrush Color="{DynamicResource NectralVariantColor100}"/>
+					</Border.Background>
+				</Border>
+			</StackPanel>
+		</Border>
+		
+		<StackPanel Orientation="Horizontal"
+					Margin="16" Spacing="8"
+					HorizontalAlignment="Center">
+			<Button Content="Red"
+					Name="rButton"
+					CornerRadius="16"
+					Width="100"
+					Height="35"
+					FontWeight="Bold"
+					BorderThickness="3"
+					VerticalContentAlignment="Center"
+					HorizontalContentAlignment="Center"
+					Foreground="{DynamicResource PrimaryColor30}"
+					Background="{DynamicResource PrimaryColor80}"
+					BorderBrush="{DynamicResource PrimaryColor95}"/>
+
+			<Button Content="Blue"
+					Name="bButton"
+					CornerRadius="16"
+					Width="100"
+					Height="35"
+					FontWeight="Bold"
+					BorderThickness="3"
+					VerticalContentAlignment="Center"
+					HorizontalContentAlignment="Center"
+					Foreground="{DynamicResource PrimaryColor30}"
+					Background="{DynamicResource PrimaryColor80}"
+					BorderBrush="{DynamicResource PrimaryColor95}"/>
+
+			<Button Content="Green"
+					Name="gButton"
+					CornerRadius="16"
+					Width="100"
+					Height="35"
+					FontWeight="Bold"
+					BorderThickness="3"
+					VerticalContentAlignment="Center"
+					HorizontalContentAlignment="Center"
+					Foreground="{DynamicResource PrimaryColor30}"
+					Background="{DynamicResource PrimaryColor80}"
+					BorderBrush="{DynamicResource PrimaryColor95}"/>
+		</StackPanel>
+		
+		<TextBox HorizontalAlignment="Center"
+				 Name="Test_Text"
+				 CornerRadius="16"
+				 MinWidth="300"
+				 Margin="0 0 0 8"
+				 Height="35"
+				 BorderThickness="3"
+				 Text="C:\Users\wxysd\Desktop\总整包\素材库\图片素材\桌面背景\KM]OY~(HPS}7I6O[0}85D`Q.jpg"
+				 Foreground="{DynamicResource PrimaryColor30}"
+				 Background="{DynamicResource PrimaryColor80}"
+				 BorderBrush="{DynamicResource PrimaryColor95}"
+				 VerticalContentAlignment="Center"/>
+	
+			<Button Content="Select this image"
+					Name="iButton"
+					CornerRadius="16"
+					Width="150"
+					Height="35"
+					Margin="0 0 0 8"
+					FontWeight="Bold"
+					BorderThickness="3"
+					HorizontalAlignment="Center"
+					HorizontalContentAlignment="Center"
+					Foreground="{DynamicResource PrimaryColor30}"
+					Background="{DynamicResource PrimaryColor80}"
+					BorderBrush="{DynamicResource PrimaryColor95}"/>
+	
+			<Border Height="150"
+					Width="350"
+					BorderThickness="3"
+					CornerRadius="16"
+					Name="linearBorder"
+					BorderBrush="{DynamicResource PrimaryColor95}"/>
+	</StackPanel>-->
+</Window>
