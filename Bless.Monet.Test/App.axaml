@@ -4,7 +4,7 @@
 			 RequestedThemeVariant="Default"
 			 xmlns:bm="using:Bless.Monet">
 	<Application.Styles>
-		<bm:Monet PrimaryColor="Blue"/>
 		<FluentTheme DensityStyle="Compact"/>
+		<bm:Monet/>
 	</Application.Styles>
 </Application>

@@ -19,8 +19,7 @@ public partial class MainWindow : Window {
 
     public MainWindow() {
         InitializeComponent();
-        _monet = (Application.Current!.Styles[0] as Monet)!;
-        _monet.RefreshDynamicColors(Colors.Red);
+        _monet = (Application.Current!.Styles[1] as Monet)!;
         ActualThemeVariantChanged += (_, arg) => {
             Theme.Text = ActualThemeVariant == ThemeVariant.Dark ? "Dark Mode" : "Light Mode";
             //_monet.RefreshDynamicColors(Colors.Red);
