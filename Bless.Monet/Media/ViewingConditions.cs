@@ -2,7 +2,7 @@
 
 namespace Bless.Monet.Media;
 
-public struct ViewingConditions {
+public readonly struct ViewingConditions {
     public static readonly ViewingConditions Default =
         DefaultWithBackgroundLstar(50.0);
 

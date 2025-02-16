@@ -24,14 +24,6 @@ public sealed class Monet : Styles, IResourceProvider {
     }
 
     private void Init() {
-        //If PrimaryColor is null, the monet will use platform color.
-        Application.Current!.PlatformSettings!.ColorValuesChanged += (_, arg) => {
-            if (IsAutoSetColor) {
-                PrimaryColor = arg.AccentColor1;
-                RefreshDynamicColors(PrimaryColor ?? Colors.Red);
-            }
-        };
-
         if (string.IsNullOrWhiteSpace(ImageSource)) {
             RefreshDynamicColors(PrimaryColor ?? Application.Current!.PlatformSettings.GetColorValues().AccentColor1);
             return;
@@ -41,14 +33,15 @@ public sealed class Monet : Styles, IResourceProvider {
     }
 
     public void RefreshDynamicColorsFromBitmap(string path) {
-        var primaryColor = BitmapUtil.QuantizeAndGetPrimaryColors(Image.Load<Rgba32>(path))?
+        ImageSource = path;
+        PrimaryColor = BitmapUtil.QuantizeAndGetPrimaryColors(Image.Load<Rgba32>(path))?
             .ToList()?
             .FirstOrDefault();
 
-        if (primaryColor is null)
+        if (PrimaryColor is null)
             return;
 
-        RefreshDynamicColors(primaryColor ?? Colors.Red);
+        RefreshDynamicColors(PrimaryColor.Value);
     }
 
     public void RefreshDynamicColors(Color primaryColours) {
@@ -57,6 +50,8 @@ public sealed class Monet : Styles, IResourceProvider {
 
         _resources = [];
         int tone = 0;
+
+        PrimaryColor = primaryColours;
         for (int i = 0; i < 11; i++) {
             //PrimaryColor A1
             HctColor primaryHct = primaryColours;

@@ -19,25 +19,27 @@ public partial class MainWindow : Window {
 
     public MainWindow() {
         InitializeComponent();
-        _monet = (Application.Current.Styles[0] as Monet)!;
+        _monet = (Application.Current!.Styles[0] as Monet)!;
         _monet.RefreshDynamicColors(Colors.Red);
         ActualThemeVariantChanged += (_, arg) => {
             Theme.Text = ActualThemeVariant == ThemeVariant.Dark ? "Dark Mode" : "Light Mode";
-            _monet.RefreshDynamicColors(Colors.Red);
+            //_monet.RefreshDynamicColors(Colors.Red);
         };
+
+        IButton.Click += IButton_Click;
     }
 
-    private async void IButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e) {
-        //var fi = new FileInfo(Test_Text.Text! ?? "");
-        //if (!fi.Exists) {
-        //    return;
-        //}
+    private void IButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e) {
+        var fi = new FileInfo(Text_Test?.Text! ?? @"C:\");
+        if (!fi.Exists) {
+            return;
+        }
 
-        //Dispatcher.UIThread.Post(() => {
-        //    _monet.RefreshDynamicColorsFromBitmap(fi.FullName);
-        //}, DispatcherPriority.ApplicationIdle);
+        Dispatcher.UIThread.Post(() => {
+            _monet.RefreshDynamicColorsFromBitmap(fi.FullName);
+        }, DispatcherPriority.ApplicationIdle);
 
-        //RB(fi.FullName);
+        RB(fi.FullName);
     }
 
     private void RB(string s) {
