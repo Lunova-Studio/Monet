@@ -1,4 +1,6 @@
-﻿namespace Monet.Shared.Utilities;
+﻿using Monet.Shared.Media.ColorSpace;
+
+namespace Monet.Shared.Utilities;
 
 public static class ColorUtil {
     internal readonly static double[] WHITE_POINT_D65 =
@@ -199,4 +201,27 @@ public static class ColorUtil {
     public static uint ToBuleByArgb(uint argb) {
         return argb & 255;
     }
+
+    /// <summary>
+    /// Returns true if color is disliked.
+    /// </summary>
+    public static bool GetIsDisliked(Hct hct) {
+        var hP = Math.Round(hct.H) >= 90.0 && Math.Round(hct.H) <= 111.0;
+        var cP = Math.Round(hct.C) > 16.0;
+        var tP = Math.Round(hct.T) < 65.0;
+
+        return hP && cP && tP;
+    }
+
+    /// <summary>
+    /// If color is disliked, lighten it to make it likable.
+    /// </summary>
+    public static Hct Fix(Hct hct) {
+        if(GetIsDisliked(hct))
+            return Hct.Parse(hct.H, hct.C, 70.0);
+
+        return hct;
+    }
+
+    public const uint GOOGLE_BLUE = 0xFF1b6ef3;
 }

@@ -19,9 +19,15 @@ public sealed class DynamicColor {
 
     private readonly Dictionary<DynamicScheme, Hct> _hctCache = new Dictionary<DynamicScheme, Hct>();
 
-    public DynamicColor(string name, Func<DynamicScheme, TonalPalette> palette, Func<DynamicScheme, double> tone, bool isBackground,
-        Func<DynamicScheme, DynamicColor> background = null!, Func<DynamicScheme, DynamicColor> secondBackground = null,
-        ContrastCurve contrastCurve = null!, Func<DynamicScheme, ToneDeltaPair> toneDeltaPair = null!, Func<DynamicScheme, double> opacity = null!) {
+    public DynamicColor(string name,
+        Func<DynamicScheme, TonalPalette> palette,
+        Func<DynamicScheme, double> tone, 
+        bool isBackground,
+        Func<DynamicScheme, DynamicColor> background = null!,
+        Func<DynamicScheme, DynamicColor> secondBackground = null,
+        ContrastCurve contrastCurve = null!,
+        Func<DynamicScheme, ToneDeltaPair> toneDeltaPair = null!,
+        Func<DynamicScheme, double> opacity = null!) {
         Name = name;
         Palette = palette;
         Tone = tone;
@@ -190,6 +196,12 @@ public sealed class DynamicColor {
 
             return answer;
         }
+    }
+
+    public static DynamicColor CreateFromPalette(string name,
+        Func<DynamicScheme, TonalPalette> palette,
+        Func<DynamicScheme, double> tone) {
+        return new DynamicColor(name, palette, tone, false);
     }
 
     public static double ForegroundTone(double bgTone, double ratio) {

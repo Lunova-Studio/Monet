@@ -1,0 +1,110 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Monet.Sample.Avalonia.MainWindow"
+        Title="Monet.Sample.Avalonia"
+		Background="{DynamicResource BackgroundBrush}">
+	<Window.Styles>
+		<Style Selector="Button.c1">
+			<Setter Property="Width" Value="320"/>
+			<Setter Property="Margin" Value="0 0 8 8"/>
+			<Setter Property="Transitions">
+				<Transitions>
+					<BrushTransition Duration="0:0:.15"
+									 Property="Background"/>
+
+					<BrushTransition Duration="0:0:.15"
+									 Property="BorderBrush"/>
+				</Transitions>
+			</Setter>
+
+			<Setter Property="Template">
+				<ControlTemplate>
+					<StackPanel>
+						<Border Height="120"
+								Width="{TemplateBinding Width}"
+								Transitions="{TemplateBinding Transitions}"
+								Background="{TemplateBinding Background}">
+							<TextBlock Text="{TemplateBinding Content}"
+									   FontSize="14"
+									   Padding="12"
+									   Foreground="{TemplateBinding BorderBrush}"/>
+						</Border>
+
+						<Border Height="40"
+								Width="{TemplateBinding Width}"
+								Transitions="{TemplateBinding Transitions}"
+								Background="{TemplateBinding BorderBrush}">
+							<TextBlock Text="On Background"
+									   FontSize="14"
+									   Padding="8 0"
+									   HorizontalAlignment="Left"
+									   VerticalAlignment="Center"
+									   Foreground="{TemplateBinding Background}"/>
+						</Border>
+					</StackPanel>
+				</ControlTemplate>
+			</Setter>
+		</Style>
+	</Window.Styles>
+	
+	<StackPanel Spacing="8"
+			Margin="16">
+		<TextBlock Text="暗色主题"
+				   FontWeight="Bold"
+				   FontSize="36"
+				   Name="Theme"
+				   Margin="0 0 0 24"
+				   HorizontalAlignment="Left"
+				   Foreground="{DynamicResource OnBackgroundBrush}"/>
+
+		<WrapPanel Orientation="Horizontal">
+			<Button Classes="c1"
+					Content="Primary"
+					Background="{DynamicResource PrimaryBrush}"
+					BorderBrush="{DynamicResource OnPrimaryBrush}"/>
+
+			<Button Classes="c1"
+					Content="Secondary"
+					Background="{DynamicResource SecondaryBrush}"
+					BorderBrush="{DynamicResource OnSecondaryBrush}"/>
+
+			<Button Classes="c1"
+					Content="Tertiary"
+					Background="{DynamicResource TertiaryBrush}"
+					BorderBrush="{DynamicResource OnTertiaryBrush}"/>
+
+			<Button Classes="c1"
+					Content="PrimaryContainer"
+					Background="{DynamicResource PrimaryContainerBrush}"
+					BorderBrush="{DynamicResource OnPrimaryContainerBrush}"/>
+
+			<Button Classes="c1"
+					Content="SecondaryContainer"
+					Background="{DynamicResource SecondaryContainerBrush}"
+					BorderBrush="{DynamicResource OnSecondaryContainerBrush}"/>
+
+			<Button Classes="c1"
+					Content="SecondaryContainer"
+					Background="{DynamicResource TertiaryContainerBrush}"
+					BorderBrush="{DynamicResource OnTertiaryContainerBrush}"/>
+		</WrapPanel>
+
+		<TextBox CornerRadius="26"
+				 MinWidth="500"
+				 Padding="16 4"
+				 Name="Text_Test"
+				 HorizontalContentAlignment="Left"
+				 VerticalContentAlignment="Center"
+				 Watermark="Image path..."
+				 HorizontalAlignment="Center"/>
+
+		<Button Padding="16 8"
+				Name="IButton"
+				CornerRadius="26"
+				HorizontalAlignment="Center"
+				Content="Change the background"/>
+	</StackPanel>
+</Window>

@@ -55,8 +55,7 @@ public sealed class TonalPalette {
     /// <param name="tone">HCT tone, measured from 0 to 100.</param>
     /// <returns>ARGB representation of a color with that tone.</returns>
     public uint CreateFromTone(int tone) {
-        uint color = _cache[tone];
-        if (color is 0) {
+        if (!_cache.TryGetValue(tone, out uint color)) {
             color = Hct.Parse(H, C, tone).ToUInt32();
             _cache.Add(tone, color);
         }

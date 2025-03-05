@@ -1,11 +1,12 @@
-﻿using Monet.Shared.Media.Palettes;
+﻿using Monet.Shared.Interfaces;
+using Monet.Shared.Media.Palettes;
 
 namespace Monet.Shared.Media.Scheme;
 
 /// <summary>
 /// Represents a Material color scheme, a mapping of color roles to colors.
 /// </summary>
-public sealed class DefaultScheme {
+public sealed class DefaultScheme : IColorValueScheme {
     #region Colors
 
     public required uint PrimaryColorValue { get; set; }
@@ -33,7 +34,7 @@ public sealed class DefaultScheme {
     public required uint OnSurfaceColorValue { get; set; }
     public required uint SurfaceVariantColorValue { get; set; }
     public required uint OnSurfaceVariantColorValue { get; set; }
-    public required uint InverseSurfaceColrValue { get; set; }
+    public required uint InverseSurfaceColorValue { get; set; }
     public required uint InverseOnSurfaceColorValue { get; set; }
 
     public required uint OutlineColorValue { get; set; }
@@ -117,7 +118,7 @@ public sealed class DefaultScheme {
                 ShadowColorValue = palette.N1.CreateFromTone(0),
 
                 InversePrimaryColorValue = palette.A1.CreateFromTone(40),
-                InverseSurfaceColrValue = palette.N1.CreateFromTone(90),
+                InverseSurfaceColorValue = palette.N1.CreateFromTone(90),
                 InverseOnSurfaceColorValue = palette.N1.CreateFromTone(20),
             };
         }
@@ -158,7 +159,7 @@ public sealed class DefaultScheme {
                 ScrimColorValue = palette.N1.CreateFromTone(0),
                 ShadowColorValue = palette.N1.CreateFromTone(0),
 
-                InverseSurfaceColrValue = palette.N1.CreateFromTone(20),
+                InverseSurfaceColorValue = palette.N1.CreateFromTone(20),
                 InversePrimaryColorValue = palette.A1.CreateFromTone(80),
                 InverseOnSurfaceColorValue = palette.N1.CreateFromTone(95),
             };
