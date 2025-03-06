@@ -103,22 +103,29 @@
 					BorderBrush="{DynamicResource OnSecondaryContainerBrush}"/>
 
 			<Button Classes="c1"
-					Content="SecondaryContainer"
+					Content="TertiaryContainer"
 					Background="{DynamicResource TertiaryContainerBrush}"
 					BorderBrush="{DynamicResource OnTertiaryContainerBrush}"/>
 		</WrapPanel>
 
-		<ComboBox HorizontalAlignment="Center" Name="schemeComboBox">
-			<ComboBoxItem Content="Rainbow"/>
-			<ComboBoxItem Content="Content"/>
-			<ComboBoxItem Content="Fruit_Salad"/>
-			<ComboBoxItem Content="Vibrant"/>
-			<ComboBoxItem Content="Neutral"/>
-			<ComboBoxItem Content="Fidelity"/>
-			<ComboBoxItem Content="Expressive"/>
-			<ComboBoxItem Content="Monochrome"/>
-			<ComboBoxItem Content="Tonal_Spot"/>
-		</ComboBox>
+		<StackPanel HorizontalAlignment="Center"
+					Orientation="Horizontal" 
+					Spacing="8">
+			<ComboBox Name="schemeComboBox">
+				<ComboBoxItem Content="Rainbow"/>
+				<ComboBoxItem Content="Content"/>
+				<ComboBoxItem Content="Fruit_Salad"/>
+				<ComboBoxItem Content="Vibrant"/>
+				<ComboBoxItem Content="Neutral"/>
+				<ComboBoxItem Content="Fidelity"/>
+				<ComboBoxItem Content="Expressive"/>
+				<ComboBoxItem Content="Monochrome"/>
+				<ComboBoxItem Content="Tonal_Spot"/>
+			</ComboBox>
+		
+			<NumericUpDown Minimum="-1"
+						   Name="numericUpDown"/>
+		</StackPanel>
 
 		<TextBox CornerRadius="26"
 				 MinWidth="500"

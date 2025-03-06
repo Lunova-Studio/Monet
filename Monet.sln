@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monet.Shared", "Monet.Share
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monet.Sample.Avalonia", "Monet.Sample.Avalonia\Monet.Sample.Avalonia.csproj", "{58AA71E6-9298-451B-9497-2B54BE4CF6D4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monet.Avalonia", "Monet.Avalonia\Monet.Avalonia.csproj", "{4344A41C-F906-4CE8-8446-6AA5FB9483CE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{58AA71E6-9298-451B-9497-2B54BE4CF6D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{58AA71E6-9298-451B-9497-2B54BE4CF6D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{58AA71E6-9298-451B-9497-2B54BE4CF6D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4344A41C-F906-4CE8-8446-6AA5FB9483CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4344A41C-F906-4CE8-8446-6AA5FB9483CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4344A41C-F906-4CE8-8446-6AA5FB9483CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4344A41C-F906-4CE8-8446-6AA5FB9483CE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
