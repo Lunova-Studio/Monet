@@ -12,17 +12,17 @@ public partial struct Hct {
     /// <summary>
     /// Hue（色相）
     /// </summary>
-    public double H { get; set; }
+    public double H { get; set; } = -1;
 
     /// <summary>
     /// Chroma（色度）
     /// </summary>
-    public double C { get; set; }
+    public double C { get; set; } = -1;
 
     /// <summary>
     /// Tone（亮度）
     /// </summary>
-    public double T { get; set; }
+    public double T { get; set; } = -1;
 
     public Hct(uint argb) {
         SetInternalState(argb);
@@ -74,6 +74,10 @@ public partial struct Hct {
         H = cam.H;
         C = cam.C;
         T = ColorUtil.LStarFromArgb(argb);
+    }
+
+    internal readonly bool IsDefault() {
+        return H is -1 || C is -1 || T is -1;
     }
 
     public static implicit operator Hct(uint argb) {

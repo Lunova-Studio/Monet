@@ -259,7 +259,6 @@ public sealed class MaterialDynamicColor {
         new(nameof(OnSecondary),
             x => x.SecondaryPalette,
             x1 => {
-                Debug.WriteLine(x1.IsDark);
                 if (GetIsMonochrome(x1))
                     return x1.IsDark ? 10.0 : 100.0;
                 else 

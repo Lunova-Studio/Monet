@@ -52,13 +52,29 @@
 	
 	<StackPanel Spacing="8"
 			Margin="16">
-		<TextBlock Text="暗色主题"
-				   FontWeight="Bold"
+		<StackPanel Spacing="8"
+					Orientation="Horizontal"
+					HorizontalAlignment="Left">
+			<TextBlock Text="暗色主题"
+				   FontWeight="SemiBold"
 				   FontSize="36"
 				   Name="Theme"
-				   Margin="0 0 0 24"
-				   HorizontalAlignment="Left"
 				   Foreground="{DynamicResource OnBackgroundBrush}"/>
+		
+			<TextBlock Text="Content"
+					   FontWeight="SemiBold"
+					   FontSize="20"
+					   Name="ThemeScheme"
+					   VerticalAlignment="Bottom"
+					   Foreground="{DynamicResource OnBackgroundBrush}"/>
+		</StackPanel>
+
+		<ToggleSwitch Name="change"
+					  IsChecked="true"
+					  OnContent="Dark"
+					  OffContent="Light"
+					  Margin="0 -4 0 16"
+					  Foreground="{DynamicResource OnBackgroundBrush}"/>
 
 		<WrapPanel Orientation="Horizontal">
 			<Button Classes="c1"
@@ -91,6 +107,18 @@
 					Background="{DynamicResource TertiaryContainerBrush}"
 					BorderBrush="{DynamicResource OnTertiaryContainerBrush}"/>
 		</WrapPanel>
+
+		<ComboBox HorizontalAlignment="Center" Name="schemeComboBox">
+			<ComboBoxItem Content="Rainbow"/>
+			<ComboBoxItem Content="Content"/>
+			<ComboBoxItem Content="Fruit_Salad"/>
+			<ComboBoxItem Content="Vibrant"/>
+			<ComboBoxItem Content="Neutral"/>
+			<ComboBoxItem Content="Fidelity"/>
+			<ComboBoxItem Content="Expressive"/>
+			<ComboBoxItem Content="Monochrome"/>
+			<ComboBoxItem Content="Tonal_Spot"/>
+		</ComboBox>
 
 		<TextBox CornerRadius="26"
 				 MinWidth="500"
