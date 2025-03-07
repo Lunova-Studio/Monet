@@ -3,7 +3,8 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Styling;
-using Monet.Avalonias.Extensions;
+using Monet.Avalonia;
+using Monet.Avalonia.Extensions;
 using Monet.Shared.Enums;
 using Monet.Shared.Media.Scheme.Dynamic;
 using SixLabors.ImageSharp.PixelFormats;
@@ -15,6 +16,7 @@ namespace Monet.Sample.Avalonia;
 
 public partial class MainWindow : Window {
     private double level = 0.57;
+    private MonetColors _monet = Application.Current.Styles[1] as MonetColors;
     private ResourceDictionary resources = null!;
     private Color defaultColor = Application.Current!.PlatformSettings!.GetColorValues().AccentColor1;
 
@@ -55,7 +57,9 @@ public partial class MainWindow : Window {
     }
 
     private void Change_IsCheckedChanged(object? sender, RoutedEventArgs e) {
-        Change(change.IsChecked ?? true);
+        _monet.IsColorMatch = true;
+        _monet.IsDarkMode = change.IsChecked ?? true;
+        Change(_monet.IsDarkMode);
     }
 
     private void SchemeComboBox_SelectionChanged(object? sender, SelectionChangedEventArgs e) {
@@ -67,74 +71,34 @@ public partial class MainWindow : Window {
 
         switch (schemeComboBox.SelectedIndex) {
             case 0:
-                BuildScheme(defaultColor, Variant.Rainbow, isDark);
+                _monet.BuildScheme(Variant.Rainbow, defaultColor);
                 break;
             case 1:
-                BuildScheme(defaultColor, Variant.Content, isDark);
+                _monet.BuildScheme(Variant.Content, defaultColor);
                 break;
             case 2:
-                BuildScheme(defaultColor, Variant.Fruit_Salad, isDark);
+                _monet.BuildScheme(Variant.Fruit_Salad, defaultColor);
                 break;
             case 3:
-                BuildScheme(defaultColor, Variant.Vibrant, isDark);
+                _monet.BuildScheme(Variant.Vibrant, defaultColor);
                 break;
             case 4:
-                BuildScheme(defaultColor, Variant.Neutral, isDark);
+                _monet.BuildScheme(Variant.Neutral, defaultColor);
                 break;
             case 5:
-                BuildScheme(defaultColor, Variant.Fidelity, isDark);
+                _monet.BuildScheme(Variant.Fidelity, defaultColor);
                 break;
             case 6:
-                BuildScheme(defaultColor, Variant.Expressive, isDark);
+                _monet.BuildScheme(Variant.Expressive, defaultColor);
                 break;
             case 7:
-                BuildScheme(defaultColor, Variant.Monochrome, isDark);
+                _monet.BuildScheme(Variant.Monochrome, defaultColor);
                 break;
             case 8:
-                BuildScheme(defaultColor, Variant.Tonal_Spot, isDark);
+                _monet.BuildScheme(Variant.Tonal_Spot, defaultColor);
                 break;
             default:
                 break;
         }
-    }
-
-    void BuildScheme(Color color, Variant variant, bool isDark) {
-        DynamicScheme scheme = variant switch {
-            Variant.Rainbow => new RainbowScheme(color.ToUInt32(), isDark, level),
-            Variant.Content => new ContentScheme(color.ToUInt32(), isDark, level),
-            Variant.Fruit_Salad => new FruitSaladScheme(color.ToUInt32(), isDark, level),
-            Variant.Vibrant => new VibrantScheme(color.ToUInt32(), isDark, level),
-            Variant.Tonal_Spot => new TonalSpotScheme(color.ToUInt32(), isDark, level),
-            Variant.Monochrome => new MonochromeScheme(color.ToUInt32(), isDark, level),
-            Variant.Expressive => new ExpressiveScheme(color.ToUInt32(), isDark, level),
-            Variant.Fidelity => new FidelitySceme(color.ToUInt32(), isDark, level),
-            Variant.Neutral => new NeutralScheme(color.ToUInt32(), isDark, level),
-            _ => throw new Exception()
-        };
-
-        ThemeScheme.Text = variant.ToString();
-
-        if (resources != null) {
-            Resources.MergedDictionaries.Remove(resources);
-        }
-
-        resources = new() {
-            { "PrimaryBrush", new SolidColorBrush(Color.FromUInt32(scheme.PrimaryColorValue)) },
-            { "OnPrimaryBrush", new SolidColorBrush(Color.FromUInt32(scheme.OnPrimaryColorValue)) },
-            { "PrimaryContainerBrush", new SolidColorBrush(Color.FromUInt32(scheme.PrimaryContainerColorValue)) },
-            { "OnPrimaryContainerBrush", new SolidColorBrush(Color.FromUInt32(scheme.OnPrimaryContainerColorValue)) },
-            { "SecondaryBrush", new SolidColorBrush(Color.FromUInt32(scheme.SecondaryColorValue)) },
-            { "OnSecondaryBrush", new SolidColorBrush(Color.FromUInt32(scheme.OnSecondaryColorValue)) },
-            { "SecondaryContainerBrush", new SolidColorBrush(Color.FromUInt32(scheme.SecondaryContainerColorValue)) },
-            { "OnSecondaryContainerBrush", new SolidColorBrush(Color.FromUInt32(scheme.OnSecondaryContainerColorValue)) },
-            { "TertiaryBrush", new SolidColorBrush(Color.FromUInt32(scheme.TertiaryColorValue)) },
-            { "OnTertiaryBrush", new SolidColorBrush(Color.FromUInt32(scheme.OnTertiaryColorValue)) },
-            { "TertiaryContainerBrush", new SolidColorBrush(Color.FromUInt32(scheme.TertiaryContainerColorValue)) },
-            { "OnTertiaryContainerBrush", new SolidColorBrush(Color.FromUInt32(scheme.OnTertiaryContainerColorValue)) },
-            { "BackgroundBrush", new SolidColorBrush(Color.FromUInt32(scheme.BackgroundColorValue)) },
-            { "OnBackgroundBrush", new SolidColorBrush(Color.FromUInt32(scheme.OnBackgroundColorValue)) }
-        };
-
-        Resources.MergedDictionaries.Add(resources);
     }
 }
