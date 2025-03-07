@@ -129,10 +129,11 @@ internal readonly struct KeyColor {
     }
 
     private readonly double MaxChroma(int tone) {
-        if (!_chromaCache.ContainsKey(tone)) {
-            _chromaCache[tone] = Hct.Parse(H, MAX_CHROMA, tone).C;
+        if (!_chromaCache.TryGetValue(tone, out var value)) {
+            value = Hct.Parse(H, MAX_CHROMA, tone).C;
+            _chromaCache[tone] = value;
         }
 
-        return _chromaCache[tone];
+        return value;
     }
 }

@@ -80,6 +80,10 @@ public partial struct Hct {
         return H is -1 || C is -1 || T is -1;
     }
 
+    public static implicit operator uint(Hct hct) {
+        return hct.ToUInt32();
+    }
+
     public static implicit operator Hct(uint argb) {
         return new(argb);
     }

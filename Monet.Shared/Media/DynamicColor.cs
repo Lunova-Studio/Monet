@@ -16,15 +16,14 @@ public sealed class DynamicColor {
     public readonly ContrastCurve ContrastCurve;
     public readonly Func<DynamicScheme, ToneDeltaPair> ToneDeltaPair;
     public readonly Func<DynamicScheme, double> Opacity;
-
-    private readonly Dictionary<DynamicScheme, Hct> _hctCache = new Dictionary<DynamicScheme, Hct>();
+    private readonly Dictionary<DynamicScheme, Hct> _hctCache = [];
 
     public DynamicColor(string name,
         Func<DynamicScheme, TonalPalette> palette,
-        Func<DynamicScheme, double> tone, 
+        Func<DynamicScheme, double> tone,
         bool isBackground,
         Func<DynamicScheme, DynamicColor> background = null!,
-        Func<DynamicScheme, DynamicColor> secondBackground = null,
+        Func<DynamicScheme, DynamicColor> secondBackground = null!,
         ContrastCurve contrastCurve = null!,
         Func<DynamicScheme, ToneDeltaPair> toneDeltaPair = null!,
         Func<DynamicScheme, double> opacity = null!) {
@@ -102,10 +101,13 @@ public sealed class DynamicColor {
                 fTone = ForegroundTone(bgTone, fContrast);
             }
 
-            if ((fTone - nTone) * (scheme.IsDark ? 1 : -1) < delta) {
-                fTone = Math.Clamp(0, 100, nTone + delta * (scheme.IsDark ? 1 : -1));
-                if ((fTone - nTone) * (scheme.IsDark ? 1 : -1) < delta)
-                    nTone = Math.Clamp(0, 100, fTone - delta * (scheme.IsDark ? 1 : -1));
+            if ((fTone - nTone) * expansionDir < delta) {
+                //fTone = Math.Clamp(0, 100, nTone + delta * expansionDir);
+                fTone = Math.Clamp(nTone + delta * expansionDir, 0, 100);
+
+                if ((fTone - nTone) * expansionDir < delta)
+                    //nTone = Math.Clamp(0, 100, fTone - delta * expansionDir);
+                    nTone = Math.Clamp(fTone - delta * expansionDir, 0, 100);
             }
 
             // Avoids the 50-59 awkward zone.

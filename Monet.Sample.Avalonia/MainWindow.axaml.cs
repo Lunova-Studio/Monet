@@ -1,18 +1,22 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Styling;
+using Monet.Avalonias.Extensions;
 using Monet.Shared.Enums;
 using Monet.Shared.Media.Scheme.Dynamic;
+using SixLabors.ImageSharp.PixelFormats;
 using System;
-using System.Diagnostics;
-using System.Reflection.Emit;
+using System.Linq;
+using Color = Avalonia.Media.Color;
 
 namespace Monet.Sample.Avalonia;
+
 public partial class MainWindow : Window {
     private double level = 0.57;
     private ResourceDictionary resources = null!;
-    private readonly Color defaultColor = Color.Parse("#B33B15");
+    private Color defaultColor = Application.Current!.PlatformSettings!.GetColorValues().AccentColor1;
 
     public MainWindow() {
         InitializeComponent();
@@ -21,11 +25,28 @@ public partial class MainWindow : Window {
     protected override void OnLoaded(RoutedEventArgs e) {
         base.OnLoaded(e);
 
+        IButton.Click += IButton_Click;
         change.IsCheckedChanged += Change_IsCheckedChanged;
         numericUpDown.ValueChanged += NumericUpDown_ValueChanged;
         schemeComboBox.SelectionChanged += SchemeComboBox_SelectionChanged;
 
         schemeComboBox.SelectedIndex = 0;
+    }
+
+    private async void IButton_Click(object? sender, RoutedEventArgs e) {
+        var res = await this.StorageProvider.OpenFilePickerAsync(new() { Title = "Image" });
+        if (res is null || res.Count is 0)
+            return;
+
+        var result = SixLabors.ImageSharp.Image
+            .Load<Rgba32>(res[0].Path.LocalPath)
+            .QuantizeAndGetPrimaryColors()
+            .First();
+
+        defaultColor = result;
+        Text_Test.Text = res[0].Path.LocalPath;
+
+        Change(change.IsChecked ?? true);
     }
 
     private void NumericUpDown_ValueChanged(object? sender, NumericUpDownValueChangedEventArgs e) {

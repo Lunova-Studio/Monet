@@ -153,12 +153,12 @@ public class DynamicScheme : IColorValueScheme {
         Variant variant, 
         double contrastLevel,
         TonalPalette primaryPalette,
-        TonalPalette neutralPalette,
-        TonalPalette tertiaryPalette,
         TonalPalette secondaryPalette,
+        TonalPalette tertiaryPalette,
+        TonalPalette neutralPalette,
         TonalPalette neutralVariantPalette) {
         SourceColorHct = sourceColorHct;
-        SourceColorArgb = sourceColorHct.ToUInt32();
+        SourceColorArgb = sourceColorHct;
         IsDark = isDark;
         Variant = variant;
         ContrastLevel = contrastLevel;
