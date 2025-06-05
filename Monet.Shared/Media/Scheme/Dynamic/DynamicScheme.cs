@@ -58,43 +58,43 @@ public class DynamicScheme : IColorValueScheme {
         GetArgb(new MaterialDynamicColor().SurfaceDim);
     
     public uint SurfaceBrightColorValue =>
-        GetArgb(new MaterialDynamicColor().SurfaceDim);
+        GetArgb(new MaterialDynamicColor().SurfaceBright);
 
-    public uint SurfaceContainerLowestColorValue =>
-        GetArgb(new MaterialDynamicColor().SurfaceDim);
+    public uint SurfaceContainerLowColorValue =>
+        GetArgb(new MaterialDynamicColor().SurfaceContainerLow);
 
     public uint SurfaceContainerColorValue =>
-        GetArgb(new MaterialDynamicColor().SurfaceDim);
+        GetArgb(new MaterialDynamicColor().SurfaceContainer);
 
     public uint SurfaceContainerHighColorValue =>
-        GetArgb(new MaterialDynamicColor().SurfaceDim);
+        GetArgb(new MaterialDynamicColor().SurfaceContainerHigh);
 
     public uint SurfaceContainerHighestColorValue =>
-        GetArgb(new MaterialDynamicColor().SurfaceDim);
+        GetArgb(new MaterialDynamicColor().SurfaceContainerHighest);
 
     public uint SurfaceVariantColorValue =>
-        GetArgb(new MaterialDynamicColor().SurfaceDim);
+        GetArgb(new MaterialDynamicColor().SurfaceVariant);
 
     public uint OnSurfaceVariantColorValue =>
-        GetArgb(new MaterialDynamicColor().SurfaceDim);
+        GetArgb(new MaterialDynamicColor().OnSurfaceVariant);
 
     public uint InverseSurfaceColorValue =>
-        GetArgb(new MaterialDynamicColor().SurfaceDim);
+        GetArgb(new MaterialDynamicColor().InverseSurface);
 
     public uint InverseOnSurfaceColorValue =>
-        GetArgb(new MaterialDynamicColor().SurfaceDim);
+        GetArgb(new MaterialDynamicColor().InverseOnSurface);
 
     public uint OutlineColorValue =>
-        GetArgb(new MaterialDynamicColor().SurfaceDim);
+        GetArgb(new MaterialDynamicColor().Outline);
 
     public uint OutlineVariantColorValue =>
-        GetArgb(new MaterialDynamicColor().SurfaceDim);
+        GetArgb(new MaterialDynamicColor().OutlineVariant);
 
     public uint ShadowColorValue =>
-        GetArgb(new MaterialDynamicColor().SurfaceDim);
+        GetArgb(new MaterialDynamicColor().Shadow);
 
     public uint ScrimColorValue =>
-        GetArgb(new MaterialDynamicColor().SurfaceDim);
+        GetArgb(new MaterialDynamicColor().Scrim);
 
     public uint PrimaryColorValue =>
         GetArgb(new MaterialDynamicColor().Primary);
