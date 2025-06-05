@@ -32,10 +32,14 @@ public sealed class DefaultScheme : IColorValueScheme {
 
     public required uint SurfaceColorValue { get; set; }
     public required uint OnSurfaceColorValue { get; set; }
+    public required uint SurfaceBrightColorValue { get; set; }
     public required uint SurfaceVariantColorValue { get; set; }
+    public required uint SurfaceContainerColorValue { get; set; }
     public required uint OnSurfaceVariantColorValue { get; set; }
     public required uint InverseSurfaceColorValue { get; set; }
     public required uint InverseOnSurfaceColorValue { get; set; }
+    public required uint SurfaceContainerLowColorValue { get; set; }
+    public required uint SurfaceContainerHighColorValue { get; set; }
 
     public required uint OutlineColorValue { get; set; }
     public required uint OutlineVariantColorValue { get; set; }
@@ -105,8 +109,12 @@ public sealed class DefaultScheme : IColorValueScheme {
 
                 SurfaceColorValue = palette.N1.CreateFromTone(10),
                 OnSurfaceColorValue = palette.N1.CreateFromTone(90),
+                SurfaceBrightColorValue = palette.N1.CreateFromTone(25),
                 SurfaceVariantColorValue = palette.N2.CreateFromTone(30),
                 OnSurfaceVariantColorValue = palette.N2.CreateFromTone(80),
+                SurfaceContainerColorValue = palette.N2.CreateFromTone(15),
+                SurfaceContainerLowColorValue = palette.N2.CreateFromTone(12),
+                SurfaceContainerHighColorValue = palette.N2.CreateFromTone(18),
 
                 OutlineColorValue = palette.N2.CreateFromTone(60),
                 OutlineVariantColorValue = palette.N2.CreateFromTone(30),
@@ -147,8 +155,12 @@ public sealed class DefaultScheme : IColorValueScheme {
 
                 SurfaceColorValue = palette.N1.CreateFromTone(99),
                 OnSurfaceColorValue = palette.N1.CreateFromTone(10),
+                SurfaceBrightColorValue = palette.N1.CreateFromTone(99),
                 SurfaceVariantColorValue = palette.N2.CreateFromTone(90),
                 OnSurfaceVariantColorValue = palette.N2.CreateFromTone(30),
+                SurfaceContainerColorValue = palette.N2.CreateFromTone(90),
+                SurfaceContainerLowColorValue = palette.N2.CreateFromTone(94),
+                SurfaceContainerHighColorValue = palette.N2.CreateFromTone(86),
 
                 OutlineColorValue = palette.N2.CreateFromTone(50),
                 OutlineVariantColorValue = palette.N2.CreateFromTone(80),

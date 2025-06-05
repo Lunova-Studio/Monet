@@ -24,7 +24,11 @@ public interface IColorValueScheme {
 
     uint SurfaceColorValue { get; }
     uint OnSurfaceColorValue { get; }
+    uint SurfaceBrightColorValue { get; }
     uint SurfaceVariantColorValue { get; }
+    uint SurfaceContainerColorValue { get; }
+    uint SurfaceContainerLowColorValue { get; }
+    uint SurfaceContainerHighColorValue { get; }
     uint OnSurfaceVariantColorValue { get; }
     uint InverseSurfaceColorValue { get; }
     uint InverseOnSurfaceColorValue { get; }
