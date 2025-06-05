@@ -30,7 +30,7 @@ public static class QuantizeExtension {
                 }
             }
         }
-
+        
         return dictionary.OrderByDescending(c => c.Value)
             .Take(maxColorCount)
             .Select(c => new Color(c.Key.A, c.Key.R, c.Key.G, c.Key.B));

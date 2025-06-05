@@ -76,6 +76,12 @@
 					  Margin="0 -4 0 16"
 					  Foreground="{DynamicResource OnBackgroundBrush}"/>
 
+		<Button Height="35" Name="titlebar"
+				Background="Red" 
+				CornerRadius="0"
+				HorizontalAlignment="Stretch"
+				HorizontalContentAlignment="Center"/>
+		
 		<WrapPanel Orientation="Horizontal">
 			<Button Classes="c1"
 					Content="Primary"
