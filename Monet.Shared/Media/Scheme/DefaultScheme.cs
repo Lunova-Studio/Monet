@@ -40,6 +40,7 @@ public sealed class DefaultScheme : IColorValueScheme {
     public required uint InverseOnSurfaceColorValue { get; set; }
     public required uint SurfaceContainerLowColorValue { get; set; }
     public required uint SurfaceContainerHighColorValue { get; set; }
+    public required uint SurfaceContainerHighestColorValue { get; set; }
 
     public required uint OutlineColorValue { get; set; }
     public required uint OutlineVariantColorValue { get; set; }
@@ -115,6 +116,7 @@ public sealed class DefaultScheme : IColorValueScheme {
                 SurfaceContainerColorValue = palette.N2.CreateFromTone(15),
                 SurfaceContainerLowColorValue = palette.N2.CreateFromTone(12),
                 SurfaceContainerHighColorValue = palette.N2.CreateFromTone(18),
+                SurfaceContainerHighestColorValue = palette.N2.CreateFromTone(24),
 
                 OutlineColorValue = palette.N2.CreateFromTone(60),
                 OutlineVariantColorValue = palette.N2.CreateFromTone(30),
@@ -161,6 +163,7 @@ public sealed class DefaultScheme : IColorValueScheme {
                 SurfaceContainerColorValue = palette.N2.CreateFromTone(90),
                 SurfaceContainerLowColorValue = palette.N2.CreateFromTone(94),
                 SurfaceContainerHighColorValue = palette.N2.CreateFromTone(86),
+                SurfaceContainerHighestColorValue = palette.N2.CreateFromTone(78),
 
                 OutlineColorValue = palette.N2.CreateFromTone(50),
                 OutlineVariantColorValue = palette.N2.CreateFromTone(80),

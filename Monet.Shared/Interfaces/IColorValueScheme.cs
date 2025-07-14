@@ -29,6 +29,7 @@ public interface IColorValueScheme {
     uint SurfaceContainerColorValue { get; }
     uint SurfaceContainerLowColorValue { get; }
     uint SurfaceContainerHighColorValue { get; }
+    uint SurfaceContainerHighestColorValue { get; }
     uint OnSurfaceVariantColorValue { get; }
     uint InverseSurfaceColorValue { get; }
     uint InverseOnSurfaceColorValue { get; }
