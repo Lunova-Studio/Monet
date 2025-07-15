@@ -99,6 +99,7 @@ public sealed class MonetColors : Styles, IMonet {
         var surfaceContainerColor = Color.FromUInt32(scheme.SurfaceContainerColorValue);
         var surfaceContainerLowColor = Color.FromUInt32(scheme.SurfaceContainerLowColorValue);
         var surfaceContainerHighColor = Color.FromUInt32(scheme.SurfaceContainerHighColorValue);
+        var surfaceContainerHighestColor = Color.FromUInt32(scheme.SurfaceContainerHighestColorValue);
         var onSurfaceVariantColor = Color.FromUInt32(scheme.OnSurfaceVariantColorValue);
         var inverseSurfaceColor = Color.FromUInt32(scheme.InverseSurfaceColorValue);
         var inverseOnSurfaceColor = Color.FromUInt32(scheme.InverseOnSurfaceColorValue);
@@ -134,6 +135,7 @@ public sealed class MonetColors : Styles, IMonet {
             { "SurfaceContainerColor", surfaceContainerColor },
             { "SurfaceContainerLowColor", surfaceContainerLowColor },
             { "SurfaceContainerHighColor", surfaceContainerHighColor },
+            { "SurfaceContainerHighestColor", surfaceContainerHighestColor },
             { "OnSurfaceVariantColor", onSurfaceVariantColor },
             { "InverseSurfaceColor", inverseSurfaceColor },
             { "InverseOnSurfaceColor", inverseOnSurfaceColor },
@@ -166,6 +168,7 @@ public sealed class MonetColors : Styles, IMonet {
             { "SurfaceContainerBrush", new SolidColorBrush(surfaceContainerColor) },
             { "SurfaceContainerLowBrush", new SolidColorBrush(surfaceContainerLowColor) },
             { "SurfaceContainerHighBrush", new SolidColorBrush(surfaceContainerHighColor) },
+            { "SurfaceContainerHighestBrush", new SolidColorBrush(surfaceContainerHighestColor) },
             { "SurfaceVariantBrush", new SolidColorBrush(surfaceVariantColor) },
             { "OnSurfaceVariantBrush", new SolidColorBrush(onSurfaceVariantColor) },
             { "InverseSurfaceBrush", new SolidColorBrush(inverseSurfaceColor) },
