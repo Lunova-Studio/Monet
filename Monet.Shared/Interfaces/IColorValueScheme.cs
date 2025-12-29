@@ -1,6 +1,8 @@
 ﻿namespace Monet.Shared.Interfaces;
 
 public interface IColorValueScheme {
+    IDictionary<string, uint> Resources { get; }
+
     uint PrimaryColorValue { get; }
     uint OnPrimaryColorValue { get; }
     uint PrimaryContainerColorValue { get; }

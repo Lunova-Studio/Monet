@@ -28,20 +28,29 @@ public sealed class TemperatureManager {
         if (!_precomputedComplement.IsDefault())
             return _precomputedComplement;
 
-        var coldestH = Coldest.H;
-        var coldestTemp = GetTempsByHct()[Coldest];
-        var warmestH = Warmest.H;
-        var warmestTemp = GetTempsByHct()[Warmest];
+        var temps = GetTempsByHct();
+        var hctsByTemp = GetHctsByTemp();
 
+        var coldest = hctsByTemp.First();
+        var warmest = hctsByTemp.Last();
+
+        double coldestTemp = temps[coldest];
+        double warmestTemp = temps[warmest];
         double range = warmestTemp - coldestTemp;
+
+        double coldestH = coldest.H;
+        double warmestH = warmest.H;
+
         bool startHueIsColdestToWarmest = GetIsBetween(_hct.H, coldestH, warmestH);
         double startH = startHueIsColdestToWarmest ? warmestH : coldestH;
         double endH = startHueIsColdestToWarmest ? coldestH : warmestH;
         double directionOfRotation = 1.0;
         double smallestError = 1000.0;
 
-        Hct answer = GetHctsByHue()[Convert.ToInt32(Math.Round(_hct.H))];
-        double complementRelativeTemp = 1.0 - GetRelativeTemperature(_hct);
+        var hctsByHue = GetHctsByHue();
+
+        Hct answer = hctsByHue[Convert.ToInt32(Math.Round(_hct.H))];
+        double complementRelativeTemp = GetRelativeTemperature(_hct);
 
         // Find the color in the other section, closest to the inverse percentile
         // of the input color. This is the complement.
@@ -50,8 +59,13 @@ public sealed class TemperatureManager {
             if (!GetIsBetween(h, startH, endH))
                 continue;
 
-            var possibleAnswer = GetHctsByHue()[Convert.ToInt32(Math.Round(h))];
-            var relativeTemp = (GetTempsByHct()[possibleAnswer] - coldestTemp) / range;
+            var possibleAnswer = hctsByHue[Convert.ToInt32(Math.Round(h))];
+
+            // 这里直接用相同 range/coldestTemp 计算相对温度，避免重复调用 GetRelativeTemperature
+            var relativeTemp = range == 0.0
+                ? 0.5
+                : (temps[possibleAnswer] - coldestTemp) / range;
+
             var error = Math.Abs(complementRelativeTemp - relativeTemp);
 
             if (error < smallestError) {
@@ -70,18 +84,22 @@ public sealed class TemperatureManager {
     /// <param name="count">The number of colors to return, includes the input color.</param>
     /// <param name="divisons">The number of divisions on the color wheel.</param>
     public List<Hct> GetAnalogousColors(int count, int divisions) {
+        var hctsByHue = GetHctsByHue();
+        var temps = GetTempsByHct();
+
         int startH = Convert.ToInt32(Math.Round(_hct.H));
-        Hct startHct = GetHctsByHue()[startH];
+        Hct startHct = hctsByHue[startH];
+
         double lastTemp = GetRelativeTemperature(startHct);
 
         var allColors = new List<Hct> {
             startHct
         };
 
-        double absoluteTotalTempDelta = 0.0f;
+        double absoluteTotalTempDelta = 0.0;
         for (int i = 0; i < 360; i++) {
             int h = Convert.ToInt32(MathUtil.SanitizeDegrees(startH + i));
-            Hct hct = GetHctsByHue()[h];
+            Hct hct = hctsByHue[h];
             double temp = GetRelativeTemperature(hct);
             double tempDelta = Math.Abs(temp - lastTemp);
 
@@ -91,12 +109,12 @@ public sealed class TemperatureManager {
 
         int hAddend = 1;
         double tempStep = absoluteTotalTempDelta / divisions;
-        double totalTempDelta = 0.0d;
+        double totalTempDelta = 0.0;
         lastTemp = GetRelativeTemperature(startHct);
 
         while (allColors.Count < divisions) {
             int h = Convert.ToInt32(MathUtil.SanitizeDegrees(startH + hAddend));
-            Hct hct = GetHctsByHue()[h];
+            Hct hct = hctsByHue[h];
             double temp = GetRelativeTemperature(hct);
             double tempDelta = Math.Abs(temp - lastTemp);
             totalTempDelta += tempDelta;
@@ -115,7 +133,7 @@ public sealed class TemperatureManager {
             // as answers.
             while (indexSatisfied && allColors.Count < divisions) {
                 allColors.Add(hct);
-                desiredTotalTempDeltaForIndex = ((allColors.Count + indexAddend) * tempStep);
+                desiredTotalTempDeltaForIndex = (allColors.Count + indexAddend) * tempStep;
                 indexSatisfied = totalTempDelta >= desiredTotalTempDeltaForIndex;
                 indexAddend++;
             }
@@ -124,7 +142,9 @@ public sealed class TemperatureManager {
             hAddend++;
 
             if (hAddend > 360) {
-                while (allColors.Count > divisions)
+                // 原代码这里是 while (allColors.Count > divisions) allColors.Add(hct);
+                // 会死循环，这里按注释语义修正为填满不足的情况
+                while (allColors.Count < divisions)
                     allColors.Add(hct);
 
                 break;
@@ -169,9 +189,9 @@ public sealed class TemperatureManager {
         if (_precomputedHctsByTemp != null)
             return _precomputedHctsByTemp;
 
-        List<Hct> hcts = GetHctsByHue();
-        hcts.Add(_hct);
-        hcts.Sort((a, b) => GetTempsByHct()[a].CompareTo(GetTempsByHct()[b]));
+        var temps = GetTempsByHct();
+        var hcts = temps.Keys.ToList();
+        hcts.Sort((a, b) => temps[a].CompareTo(temps[b]));
         _precomputedHctsByTemp = hcts;
         return _precomputedHctsByTemp;
     }
@@ -183,8 +203,8 @@ public sealed class TemperatureManager {
         if (_precomputedHctsByHue != null)
             return _precomputedHctsByHue;
 
-        var hcts = new List<Hct>();
-        for (int i = 0; i <= 360.0; i += 1) {
+        var hcts = new List<Hct>(361);
+        for (int i = 0; i <= 360; i++) {
             var colorAtH = Hct.Parse(i, _hct.C, _hct.T);
             hcts.Add(colorAtH);
         }
@@ -200,12 +220,13 @@ public sealed class TemperatureManager {
         if (_precomputedTempsByHct != null)
             return _precomputedTempsByHct;
 
-        List<Hct> hcts = GetHctsByHue();
+        var hcts = GetHctsByHue();
         hcts.Add(_hct);
 
-        Dictionary<Hct, double> temperaturesByHct = [];
+        var temperaturesByHct = new Dictionary<Hct, double>(hcts.Count);
         foreach (var hct in hcts) {
-            temperaturesByHct.TryAdd(hct, GetRawTemperature(hct));
+            if (!temperaturesByHct.ContainsKey(hct))
+                temperaturesByHct[hct] = GetRawTemperature(hct);
         }
 
         _precomputedTempsByHct = temperaturesByHct;
@@ -216,8 +237,12 @@ public sealed class TemperatureManager {
     /// Temperature relative to all colors with the same chroma and tone.
     /// </summary>
     public double GetRelativeTemperature(Hct hct) {
-        double range = GetTempsByHct()[Warmest] - GetTempsByHct()[Coldest];
-        double differenceFromColdest = GetTempsByHct()[hct] - GetTempsByHct()[Coldest];
+        var temps = GetTempsByHct();
+        var warmest = Warmest;
+        var coldest = Coldest;
+
+        double range = temps[warmest] - temps[coldest];
+        double differenceFromColdest = temps[hct] - temps[coldest];
 
         return range is 0.0 ? 0.5 : differenceFromColdest / range;
     }

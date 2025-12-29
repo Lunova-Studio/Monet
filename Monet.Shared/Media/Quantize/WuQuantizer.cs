@@ -18,7 +18,7 @@ public sealed partial class WuQuantizer : IQuantizer {
     private const int TOTAL_SIZE = 35937;
 
     public QuantizedColorMap Quantize(uint[] pixels, int colorCount) {
-        var mapResult = new QuantizerMap().Quantize(pixels, colorCount);
+        var mapResult = new MapQuantizer().Quantize(pixels, colorCount);
 
         ConstructHistogram(mapResult.ColorToCount);
         CreateMoments();

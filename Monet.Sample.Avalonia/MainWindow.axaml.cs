@@ -14,8 +14,7 @@ namespace Monet.Sample.Avalonia;
 
 public partial class MainWindow : Window {
     private double level = 0.0;
-    private MonetColors _monet = Application.Current.Styles[1] as MonetColors;
-    private ResourceDictionary resources = null!;
+    private readonly MonetColors _monet = (Application.Current!.Styles[1] as MonetColors)!;
     private Color defaultColor = Application.Current!.PlatformSettings!.GetColorValues().AccentColor1;
 
     public MainWindow() {
@@ -74,7 +73,7 @@ public partial class MainWindow : Window {
                 _monet.BuildScheme(Variant.Content, defaultColor, level);
                 break;
             case 2:
-                _monet.BuildScheme(Variant.Fruit_Salad, defaultColor, level);
+                _monet.BuildScheme(Variant.FruitSalad, defaultColor, level);
                 break;
             case 3:
                 _monet.BuildScheme(Variant.Vibrant, defaultColor, level);
@@ -92,7 +91,7 @@ public partial class MainWindow : Window {
                 _monet.BuildScheme(Variant.Monochrome, defaultColor, level);
                 break;
             case 8:
-                _monet.BuildScheme(Variant.Tonal_Spot, defaultColor, level);
+                _monet.BuildScheme(Variant.TonalSpot, defaultColor, level);
                 break;
             default:
                 break;

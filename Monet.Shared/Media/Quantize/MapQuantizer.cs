@@ -21,8 +21,8 @@ namespace Monet.Shared.Media.Quantize;
 /// <summary>
 /// Creates a dictionary with keys of colors, and values of count of the color.
 /// </summary>
-public sealed class QuantizerMap : IQuantizer {
-    public Dictionary<uint, int>? ColorToCount { get; private set; }
+public sealed class MapQuantizer : IQuantizer {
+    public Dictionary<uint, int> ColorToCount { get; private set; }
 
     public QuantizedColorMap Quantize(uint[] pixels, int maxColors) {
         var pixelByCount = new Dictionary<uint, int>();

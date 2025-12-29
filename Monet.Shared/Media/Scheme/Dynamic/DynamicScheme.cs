@@ -3,6 +3,7 @@ using Monet.Shared.Interfaces;
 using Monet.Shared.Media.ColorSpace;
 using Monet.Shared.Media.Palettes;
 using Monet.Shared.Utilities;
+using System.Collections.Frozen;
 
 namespace Monet.Shared.Media.Scheme.Dynamic;
 
@@ -14,11 +15,13 @@ namespace Monet.Shared.Media.Scheme.Dynamic;
 /// 4. Contrast level. (-1 to 1, currently contrast ratio 3.0 and 7.0)
 /// </summary>
 public class DynamicScheme : IColorValueScheme {
-    public Hct SourceColorHct { get; init; }
-    public uint SourceColorArgb { get; init; }
+    private readonly MaterialDynamicColor _mdc = new();
+
     public bool IsDark { get; init; }
     public Variant Variant { get; init; }
+    public Hct SourceColorHct { get; init; }
     public double ContrastLevel { get; init; }
+    public uint SourceColorArgb { get; init; }
 
     public TonalPalette ErrorPalette { get; init; }
     public TonalPalette PrimaryPalette { get; init; }
@@ -27,130 +30,107 @@ public class DynamicScheme : IColorValueScheme {
     public TonalPalette SecondaryPalette { get; init; }
     public TonalPalette NeutralVariantPalette { get; init; }
 
-    public uint PrimaryPaletteKeyColorValue => 
-        GetArgb(new MaterialDynamicColor().PrimaryPaletteKeyColor);
 
-    public uint SecondaryPaletteKeyColorValue =>
-        GetArgb(new MaterialDynamicColor().SecondaryPaletteKeyColor);
+    public uint NeutralPaletteKeyColorValue => Resolve(_mdc.NeutralPaletteKeyColor);
+    public uint PrimaryPaletteKeyColorValue => Resolve(_mdc.PrimaryPaletteKeyColor);
+    public uint TertiaryPaletteKeyColorValue => Resolve(_mdc.TertiaryPaletteKeyColor);
+    public uint SecondaryPaletteKeyColorValue => Resolve(_mdc.SecondaryPaletteKeyColor);
+    public uint NeutralVariantPaletteKeyColorValue => Resolve(_mdc.NeutralVariantPaletteKeyColor);
 
-    public uint TertiaryPaletteKeyColorValue =>
-        GetArgb(new MaterialDynamicColor().TertiaryPaletteKeyColor);
+    public uint SurfaceColorValue => Resolve(_mdc.Surface);
+    public uint OnSurfaceColorValue => Resolve(_mdc.OnSurface);
+    public uint BackgroundColorValue => Resolve(_mdc.Background);
+    public uint OnBackgroundColorValue => Resolve(_mdc.OnBackground);
+    public uint SurfaceColorDimColorValue => Resolve(_mdc.SurfaceDim);
+    public uint SurfaceBrightColorValue => Resolve(_mdc.SurfaceBright);
+    public uint SurfaceVariantColorValue => Resolve(_mdc.SurfaceVariant);
+    public uint InverseSurfaceColorValue => Resolve(_mdc.InverseSurface);
+    public uint SurfaceContainerColorValue => Resolve(_mdc.SurfaceContainer);
+    public uint OnSurfaceVariantColorValue => Resolve(_mdc.OnSurfaceVariant);
+    public uint InverseOnSurfaceColorValue => Resolve(_mdc.InverseOnSurface);
+    public uint SurfaceContainerLowColorValue => Resolve(_mdc.SurfaceContainerLow);
+    public uint SurfaceContainerHighColorValue => Resolve(_mdc.SurfaceContainerHigh);
+    public uint SurfaceContainerHighestColorValue => Resolve(_mdc.SurfaceContainerHighest);
 
-    public uint NeutralPaletteKeyColorValue =>
-        GetArgb(new MaterialDynamicColor().NeutralPaletteKeyColor);
+    public uint ScrimColorValue => Resolve(_mdc.Scrim);
+    public uint ShadowColorValue => Resolve(_mdc.Shadow);
+    public uint OutlineColorValue => Resolve(_mdc.Outline);
+    public uint OutlineVariantColorValue => Resolve(_mdc.OutlineVariant);
 
-    public uint NeutralVariantPaletteKeyColorValue =>
-        GetArgb(new MaterialDynamicColor().NeutralVariantPaletteKeyColor);
+    public uint PrimaryColorValue => Resolve(_mdc.Primary);
+    public uint OnPrimaryColorValue => Resolve(_mdc.OnPrimary);
+    public uint InversePrimaryColorValue => Resolve(_mdc.InversePrimary);
+    public uint PrimaryContainerColorValue => Resolve(_mdc.PrimaryContainer);
+    public uint OnPrimaryContainerColorValue => Resolve(_mdc.OnPrimaryContainer);
 
-    public uint BackgroundColorValue =>
-        GetArgb(new MaterialDynamicColor().Background);
+    public uint SecondaryColorValue => Resolve(_mdc.Secondary);
+    public uint OnSecondaryColorValue => Resolve(_mdc.OnSecondary);
+    public uint SecondaryContainerColorValue => Resolve(_mdc.SecondaryContainer);
+    public uint OnSecondaryContainerColorValue => Resolve(_mdc.OnSecondaryContainer);
 
-    public uint OnBackgroundColorValue =>
-        GetArgb(new MaterialDynamicColor().OnBackground);
+    public uint TertiaryColorValue => Resolve(_mdc.Tertiary);
+    public uint OnTertiaryColorValue => Resolve(_mdc.OnTertiary);
+    public uint TertiaryContainerColorValue => Resolve(_mdc.TertiaryContainer);
+    public uint OnTertiaryContainerColorValue => Resolve(_mdc.OnTertiaryContainer);
 
-    public uint SurfaceColorValue =>
-        GetArgb(new MaterialDynamicColor().Surface);
+    public uint ErrorColorValue => Resolve(_mdc.Error);
+    public uint OnErrorColorValue => Resolve(_mdc.OnError);
+    public uint ErrorContainerColorValue => Resolve(_mdc.ErrorContainer);
+    public uint OnErrorContainerColorValue => Resolve(_mdc.OnErrorContainer);
 
-    public uint OnSurfaceColorValue =>
-        GetArgb(new MaterialDynamicColor().OnSurface);
+    public IDictionary<string, uint> Resources => new Dictionary<string, uint> {
+        ["PrimaryPaletteKeyColor"] = PrimaryPaletteKeyColorValue,
+        ["SecondaryPaletteKeyColor"] = SecondaryPaletteKeyColorValue,
+        ["TertiaryPaletteKeyColor"] = TertiaryPaletteKeyColorValue,
+        ["NeutralPaletteKeyColor"] = NeutralPaletteKeyColorValue,
+        ["NeutralVariantPaletteKeyColor"] = NeutralVariantPaletteKeyColorValue,
 
-    public uint SurfaceColorDimColorValue =>
-        GetArgb(new MaterialDynamicColor().SurfaceDim);
-    
-    public uint SurfaceBrightColorValue =>
-        GetArgb(new MaterialDynamicColor().SurfaceBright);
+        ["BackgroundColor"] = BackgroundColorValue,
+        ["OnBackgroundColor"] = OnBackgroundColorValue,
+        ["SurfaceColor"] = SurfaceColorValue,
+        ["OnSurfaceColor"] = OnSurfaceColorValue,
+        ["SurfaceColorDimColor"] = SurfaceColorDimColorValue,
+        ["SurfaceBrightColor"] = SurfaceBrightColorValue,
+        ["SurfaceContainerLowColor"] = SurfaceContainerLowColorValue,
+        ["SurfaceContainerColor"] = SurfaceContainerColorValue,
+        ["SurfaceContainerHighColor"] = SurfaceContainerHighColorValue,
+        ["SurfaceContainerHighestColor"] = SurfaceContainerHighestColorValue,
+        ["SurfaceVariantColor"] = SurfaceVariantColorValue,
+        ["OnSurfaceVariantColor"] = OnSurfaceVariantColorValue,
+        ["InverseSurfaceColor"] = InverseSurfaceColorValue,
+        ["InverseOnSurfaceColor"] = InverseOnSurfaceColorValue,
 
-    public uint SurfaceContainerLowColorValue =>
-        GetArgb(new MaterialDynamicColor().SurfaceContainerLow);
+        ["OutlineColor"] = OutlineColorValue,
+        ["OutlineVariantColor"] = OutlineVariantColorValue,
+        ["ShadowColor"] = ShadowColorValue,
+        ["ScrimColor"] = ScrimColorValue,
 
-    public uint SurfaceContainerColorValue =>
-        GetArgb(new MaterialDynamicColor().SurfaceContainer);
+        ["PrimaryColor"] = PrimaryColorValue,
+        ["OnPrimaryColor"] = OnPrimaryColorValue,
+        ["PrimaryContainerColor"] = PrimaryContainerColorValue,
+        ["OnPrimaryContainerColor"] = OnPrimaryContainerColorValue,
+        ["InversePrimaryColor"] = InversePrimaryColorValue,
 
-    public uint SurfaceContainerHighColorValue =>
-        GetArgb(new MaterialDynamicColor().SurfaceContainerHigh);
+        ["SecondaryColor"] = SecondaryColorValue,
+        ["OnSecondaryColor"] = OnSecondaryColorValue,
+        ["SecondaryContainerColor"] = SecondaryContainerColorValue,
+        ["OnSecondaryContainerColor"] = OnSecondaryContainerColorValue,
 
-    public uint SurfaceContainerHighestColorValue =>
-        GetArgb(new MaterialDynamicColor().SurfaceContainerHighest);
+        ["TertiaryColor"] = TertiaryColorValue,
+        ["OnTertiaryColor"] = OnTertiaryColorValue,
+        ["TertiaryContainerColor"] = TertiaryContainerColorValue,
+        ["OnTertiaryContainerColor"] = OnTertiaryContainerColorValue,
 
-    public uint SurfaceVariantColorValue =>
-        GetArgb(new MaterialDynamicColor().SurfaceVariant);
-
-    public uint OnSurfaceVariantColorValue =>
-        GetArgb(new MaterialDynamicColor().OnSurfaceVariant);
-
-    public uint InverseSurfaceColorValue =>
-        GetArgb(new MaterialDynamicColor().InverseSurface);
-
-    public uint InverseOnSurfaceColorValue =>
-        GetArgb(new MaterialDynamicColor().InverseOnSurface);
-
-    public uint OutlineColorValue =>
-        GetArgb(new MaterialDynamicColor().Outline);
-
-    public uint OutlineVariantColorValue =>
-        GetArgb(new MaterialDynamicColor().OutlineVariant);
-
-    public uint ShadowColorValue =>
-        GetArgb(new MaterialDynamicColor().Shadow);
-
-    public uint ScrimColorValue =>
-        GetArgb(new MaterialDynamicColor().Scrim);
-
-    public uint PrimaryColorValue =>
-        GetArgb(new MaterialDynamicColor().Primary);
-
-    public uint OnPrimaryColorValue =>
-        GetArgb(new MaterialDynamicColor().OnPrimary);
-
-    public uint PrimaryContainerColorValue =>
-        GetArgb(new MaterialDynamicColor().PrimaryContainer);
-
-    public uint OnPrimaryContainerColorValue =>
-        GetArgb(new MaterialDynamicColor().OnPrimaryContainer);
-
-    public uint InversePrimaryColorValue =>
-        GetArgb(new MaterialDynamicColor().InversePrimary);
-
-    public uint SecondaryColorValue =>
-        GetArgb(new MaterialDynamicColor().Secondary);
-
-    public uint OnSecondaryColorValue =>
-        GetArgb(new MaterialDynamicColor().OnSecondary);
-
-    public uint SecondaryContainerColorValue =>
-        GetArgb(new MaterialDynamicColor().SecondaryContainer);
-
-    public uint OnSecondaryContainerColorValue =>
-        GetArgb(new MaterialDynamicColor().OnSecondaryContainer);
-
-    public uint TertiaryColorValue =>
-        GetArgb(new MaterialDynamicColor().Tertiary);
-
-    public uint OnTertiaryColorValue =>
-        GetArgb(new MaterialDynamicColor().OnTertiary);
-
-    public uint TertiaryContainerColorValue =>
-        GetArgb(new MaterialDynamicColor().TertiaryContainer);
-
-    public uint OnTertiaryContainerColorValue =>
-        GetArgb(new MaterialDynamicColor().OnTertiaryContainer);
-
-    public uint ErrorColorValue => 
-        GetArgb(new MaterialDynamicColor().Error);
-
-    public uint OnErrorColorValue =>
-        GetArgb(new MaterialDynamicColor().OnError);
-
-    public uint ErrorContainerColorValue =>
-        GetArgb(new MaterialDynamicColor().ErrorContainer);
-
-    public uint OnErrorContainerColorValue =>
-        GetArgb(new MaterialDynamicColor().OnErrorContainer);
+        ["ErrorColor"] = ErrorColorValue,
+        ["OnErrorColor"] = OnErrorColorValue,
+        ["ErrorContainerColor"] = ErrorContainerColorValue,
+        ["OnErrorContainerColor"] = OnErrorContainerColorValue,
+    }.ToFrozenDictionary();
 
     public DynamicScheme(
         Hct sourceColorHct,
-        bool isDark, 
-        Variant variant, 
+        bool isDark,
+        Variant variant,
         double contrastLevel,
         TonalPalette primaryPalette,
         TonalPalette secondaryPalette,
@@ -168,41 +148,31 @@ public class DynamicScheme : IColorValueScheme {
         TertiaryPalette = tertiaryPalette;
         SecondaryPalette = secondaryPalette;
         NeutralVariantPalette = neutralVariantPalette;
+
+        // Google's fixed error palette
         ErrorPalette = TonalPalette.CreateFromHueChroma(25.0, 84.0);
     }
 
-    public Hct GetHct(DynamicColor dynamicColor) {
-        return dynamicColor.GetHct(this);
-    }
-
-    public uint GetArgb(DynamicColor dynamicColor) {
-        return dynamicColor.GetArgb(this);
-    }
+    public Hct GetHct(DynamicColor dynamicColor) => dynamicColor.GetHct(this);
+    public uint GetArgb(DynamicColor dynamicColor) => dynamicColor.GetArgb(this);
+    private uint Resolve(DynamicColor dc) => dc.GetArgb(this);
 
     /// <summary>
     /// Given a set of hues and set of hue rotations, locate which hues the source color's hue is between,
     /// apply the rotation at the same index as the first hue in the range,
     /// and return the rotated hue.
     /// </summary>
-    /// <param name="hct">The color whose hue should be rotated.</param>
-    /// <param name="hues">A set of hues.</param>
-    /// <param name="rotations">A set of hue rotations.</param>
-    /// <returns>Color's hue with a rotation applied.</returns>
     public static double GetRotatedHue(Hct hct, double[] hues, double[] rotations) {
-        var h = hct.H;
-        if (rotations.Length is 1)
+        double h = hct.H;
+
+        if (rotations.Length == 1)
             return MathUtil.SanitizeDegrees(h + rotations[0]);
 
-        var size = hues.Length;
-        for (var i = 0; i < (size - 2); i++) {
-            var h2 = hues[i];
-            var nextH = hues[i + 1];
-            if(h2 < h && h < nextH)
+        for (int i = 0; i < hues.Length - 1; i++) {
+            if (hues[i] < h && h < hues[i + 1])
                 return MathUtil.SanitizeDegrees(h + rotations[i]);
         }
 
-        // If this statement executes, something is wrong, there should have been a rotation
-        // found using the arrays.
         return h;
     }
 }

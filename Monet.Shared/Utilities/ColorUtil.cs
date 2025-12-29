@@ -1,227 +1,150 @@
 ﻿using Monet.Shared.Media.ColorSpace;
+using System.Runtime.CompilerServices;
 
 namespace Monet.Shared.Utilities;
 
 public static class ColorUtil {
-    internal readonly static double[] WHITE_POINT_D65 =
-        [95.047, 100.0, 108.883];
+    public const uint GOOGLE_BLUE = 0xFF1b6ef3;
+    private const double GAMMA = 2.4;
+    private const double INV_3 = 1.0 / 3.0;
+    private const double INV_2_4 = 1.0 / 2.4;
+    private const double LAB_E = 216.0 / 24389.0;
+    private const double LAB_KAPPA = 24389.0 / 27.0;
 
-    public static readonly double[,] SRGB_TO_XYZ = new double[,] {
-        {0.41233895, 0.35762064, 0.18051042},
-        {0.2126, 0.7152, 0.0722},
-        {0.01932141, 0.11916382, 0.95034478}
-    };
+    internal static readonly double[] WHITE_POINT_D65 = [95.047, 100.0, 108.883];
 
-    public static readonly double[][] XYZ_TO_SRGB = [
-        [3.2413774792388685, -1.5376652402851851, -0.49885366846268053],
-        [-0.9691452513005321, 1.8758853451067872, 0.04156585616912061],
-        [0.05562093689691305, -0.20395524564742123, 1.0571799111220335]
+    private static readonly double[] SRGB_TO_XYZ_FLAT = [
+        0.41233895, 0.35762064, 0.18051042,
+        0.2126, 0.7152, 0.0722,
+        0.01932141, 0.11916382, 0.95034478
     ];
 
+    private static readonly double[] XYZ_TO_SRGB_FLAT = [
+        3.2413774792388685, -1.5376652402851851, -0.49885366846268053,
+       -0.9691452513005321, 1.8758853451067872, 0.04156585616912061,
+        0.05562093689691305, -0.20395524564742123, 1.0571799111220335
+    ];
+
+    public static uint ToBuleByArgb(uint argb) => argb & 255u;
+
+    public static uint ToRedByArgb(uint argb) => (argb >> 16) & 255u;
+
+    public static uint ToGreenByArgb(uint argb) => (argb >> 8) & 255u;
+
+    public static double LstarFromY(double y) => 116.0 * LabF(y / 100.0) - 16.0;
+
+    public static double YFromLstar(double lstar) => 100.0 * LabInvf((lstar + 16.0) / 116.0);
+
+    public static Hct Fix(Hct hct) => GetIsDisliked(hct) ? Hct.Parse(hct.H, hct.C, 70.0) : hct;
+
+    public static uint RgbToArgb(uint r, uint g, uint b) => (255u << 24) | ((r & 255u) << 16) | ((g & 255u) << 8) | (b & 255u);
+
+    private static double LabF(double t) => t > LAB_E ? Math.Pow(t, INV_3) : (LAB_KAPPA * t + 16.0) / 116.0;
+
     public static double LStarFromArgb(uint argb) {
-        double y = XYZFromArgb(argb)[1];
+        double r = Linearized(ToRedByArgb(argb));
+        double b = Linearized(ToBuleByArgb(argb));
+        double g = Linearized(ToGreenByArgb(argb));
+        double y = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+
         return 116.0 * LabF(y / 100.0) - 16.0;
     }
 
     public static uint ArgbFromLstar(double lstar) {
         double y = YFromLstar(lstar);
-        uint component = DeLinearized(y);
+        uint c = DeLinearized(y);
 
-        return Convert.ToUInt32(RgbToArgb(component, component, component));
-    }
-
-    public static double YFromLstar(double lstar) {
-        return 100.0 * LabInvf((lstar + 16.0) / 116.0);
-    }
-
-    public static double LstarFromY(double y) {
-        return LabF(y / 100.0) * 116.0 - 16.0;
-    }
-
-    private static double LabInvf(double ft) {
-        double e = 216.0 / 24389.0;
-        double kappa = 24389.0 / 27.0;
-        double ft3 = ft * ft * ft;
-
-        if (ft3 > e)
-            return ft3;
-        else
-            return (116 * ft - 16) / kappa;
-    }
-
-    private static double LabF(double t) {
-        double e = 216.0 / 24389.0;
-        double kappa = 24389.0 / 27.0;
-
-        return t > e
-            ? Math.Pow(t, 1.0 / 3.0)
-            : (kappa * t + 16) / 116;
+        return RgbToArgb(c, c, c);
     }
 
     public static uint LinrgbToArgb(double[] linrgb) {
-        var r = DeLinearized(linrgb[0]);
-        var g = DeLinearized(linrgb[1]);
-        var b = DeLinearized(linrgb[2]);
-
-        return Convert.ToUInt32(RgbToArgb(r, g, b));
-    }
-
-    public static uint RgbToArgb(uint red, uint green, uint blue) {
-        return (255u << 24) | ((red & 255) << 16) | ((green & 255) << 8) | blue & 255;
-    }
-
-    public static uint DeLinearized(double rgbComponent) {
-        double normalized = rgbComponent / 100.0;
-        double delinearized = 0.0;
-        if (normalized <= 0.0031308)
-            delinearized = normalized * 12.92;
-        else
-            delinearized = 1.055 * Math.Pow(normalized, 1.0 / 2.4) - 0.055;
-
-        return MathUtil.ClampUint(0, 255, (int)Math.Round(delinearized * 255.0));
-    }
-
-    /// <summary>
-    /// Converts a color from ARGB representation to L*a*b* representation.
-    /// </summary>
-    /// <param name="argb">the ARGB representation of a color</param>
-    /// <returns>a Lab object representing the color</returns>
-    public static double[] LabFromArgb(uint argb) {
-        double linearR = Linearized(ToRedByArgb(argb));
-        double linearG = Linearized(ToGreenByArgb(argb));
-        double linearB = Linearized(ToBuleByArgb(argb));
-
-        var matrix = SRGB_TO_XYZ;
-        double x = matrix[0, 0] * linearR + matrix[0, 1] * linearG + matrix[0, 2] * linearB;
-        double y = matrix[1, 0] * linearR + matrix[1, 1] * linearG + matrix[1, 2] * linearB;
-        double z = matrix[2, 0] * linearR + matrix[2, 1] * linearG + matrix[2, 2] * linearB;
-
-        double[] whitePoint = WHITE_POINT_D65;
-        double xNormalized = x / whitePoint[0];
-        double yNormalized = y / whitePoint[1];
-        double zNormalized = z / whitePoint[2];
-        double fx = LabF(xNormalized);
-        double fy = LabF(yNormalized);
-        double fz = LabF(zNormalized);
-        double l = 116.0 * fy - 16;
-        double a = 500.0 * (fx - fy);
-        double b = 200.0 * (fy - fz);
-        return new double[] { l, a, b };
-    }
-
-    /// <summary>
-    /// Converts a color represented in Lab color space into an ARGB uint.
-    /// </summary>
-    /// <param name="l"></param>
-    /// <param name="a"></param>
-    /// <param name="b"></param>
-    /// <returns></returns>
-    public static uint ArgbFromLab(double l, double a, double b) {
-        double[] whitePoint = WHITE_POINT_D65;
-        double fy = (l + 16.0) / 116.0;
-        double fx = a / 500.0 + fy;
-        double fz = fy - b / 200.0;
-
-        double xNormalized = LabInvf(fx);
-        double yNormalized = LabInvf(fy);
-        double zNormalized = LabInvf(fz);
-
-        double x = xNormalized * whitePoint[0];
-        double y = yNormalized * whitePoint[1];
-        double z = zNormalized * whitePoint[2];
-
-        return ArgbFromXyz(x, y, z);
-    }
-
-    /// <summary>
-    /// Converts a color from ARGB to XYZ.
-    /// </summary>
-    public static uint ArgbFromXyz(double x, double y, double z) {
-        double[][] matrix = XYZ_TO_SRGB;
-        double linearR = matrix[0][0] * x + matrix[0][1] * y + matrix[0][2] * z;
-        double linearG = matrix[1][0] * x + matrix[1][1] * y + matrix[1][2] * z;
-        double linearB = matrix[2][0] * x + matrix[2][1] * y + matrix[2][2] * z;
-
-        uint r = DeLinearized(linearR);
-        uint g = DeLinearized(linearG);
-        uint b = DeLinearized(linearB);
+        uint r = DeLinearized(linrgb[0]);
+        uint g = DeLinearized(linrgb[1]);
+        uint b = DeLinearized(linrgb[2]);
 
         return RgbToArgb(r, g, b);
     }
 
-    /// <summary>
-    ///  Linearizes an RGB component.
-    /// </summary>
-    /// <param name="rgbComponent"></param>
-    /// <returns>0.0 <= output <= 100.0, color channel converted to linear RGB space</returns>
-    public static double Linearized(uint rgbComponent) {
-        double normalized = rgbComponent / 255.0;
+    public static uint DeLinearized(double rgbComponent) {
+        double x = rgbComponent / 100.0;
+        double v = x <= 0.0031308
+            ? x * 12.92
+            : 1.055 * Math.Pow(x, INV_2_4) - 0.055;
 
-        if (normalized <= 0.040449936)
-            return normalized / 12.92 * 100.0;
-        else
-            return Math.Pow((normalized + 0.055) / 1.055, 2.4) * 100.0;
+        return MathUtil.ClampUint(0, 255, (int)Math.Round(v * 255.0));
     }
 
-    /// <summary>
-    /// Converts a color from XYZ to ARGB
-    /// </summary>
-    /// <param name="argb"></param>
-    /// <returns></returns>
+    public static double[] LabFromArgb(uint argb) {
+        double r = Linearized(ToRedByArgb(argb));
+        double g = Linearized(ToGreenByArgb(argb));
+        double b = Linearized(ToBuleByArgb(argb));
+
+        Mul3(r, g, b, SRGB_TO_XYZ_FLAT, out double x, out double y, out double z);
+
+        double fx = LabF(x / WHITE_POINT_D65[0]);
+        double fy = LabF(y / WHITE_POINT_D65[1]);
+        double fz = LabF(z / WHITE_POINT_D65[2]);
+
+        return [
+            116.0 * fy - 16.0,
+            500.0 * (fx - fy),
+            200.0 * (fy - fz)
+        ];
+    }
+
+    public static uint ArgbFromLab(double l, double a, double b) {
+        double fy = (l + 16.0) / 116.0;
+        double fx = fy + a / 500.0;
+        double fz = fy - b / 200.0;
+
+        double x = LabInvf(fx) * WHITE_POINT_D65[0];
+        double y = LabInvf(fy) * WHITE_POINT_D65[1];
+        double z = LabInvf(fz) * WHITE_POINT_D65[2];
+
+        return ArgbFromXyz(x, y, z);
+    }
+
+    public static uint ArgbFromXyz(double x, double y, double z) {
+        Mul3(x, y, z, XYZ_TO_SRGB_FLAT, out double lr, out double lg, out double lb);
+
+        return RgbToArgb(DeLinearized(lr), DeLinearized(lg), DeLinearized(lb));
+    }
+
+    public static double Linearized(uint c) {
+        double x = c / 255.0;
+
+        return x <= 0.040449936
+            ? (x / 12.92) * 100.0
+            : Math.Pow((x + 0.055) / 1.055, GAMMA) * 100.0;
+    }
+
     public static double[] XYZFromArgb(uint argb) {
         double r = Linearized(ToRedByArgb(argb));
         double g = Linearized(ToGreenByArgb(argb));
         double b = Linearized(ToBuleByArgb(argb));
-        return MathUtil.MatrixMultiply([r, g, b], SRGB_TO_XYZ);
+        Mul3(r, g, b, SRGB_TO_XYZ_FLAT, out double x, out double y, out double z);
+
+        return [x, y, z];
     }
 
-    /// <summary>
-    /// Returns the red component of a color in ARGB format.
-    /// </summary>
-    /// <param name="argb"></param>
-    /// <returns></returns>
-    public static uint ToRedByArgb(uint argb) {
-        return (argb >> 16) & 255;
-    }
-
-    /// <summary>
-    ///  Returns the green component of a color in ARGB format
-    /// </summary>
-    /// <param name="argb"></param>
-    /// <returns></returns>
-    public static uint ToGreenByArgb(uint argb) {
-        return (argb >> 8) & 255;
-    }
-
-    /// <summary>
-    /// Returns the blue component of a color in ARGB format.
-    /// </summary>
-    /// <param name="argb"></param>
-    /// <returns></returns>
-    public static uint ToBuleByArgb(uint argb) {
-        return argb & 255;
-    }
-
-    /// <summary>
-    /// Returns true if color is disliked.
-    /// </summary>
     public static bool GetIsDisliked(Hct hct) {
-        var hP = Math.Round(hct.H) >= 90.0 && Math.Round(hct.H) <= 111.0;
-        var cP = Math.Round(hct.C) > 16.0;
-        var tP = Math.Round(hct.T) < 65.0;
+        double h = Math.Round(hct.H);
+        double c = Math.Round(hct.C);
+        double t = Math.Round(hct.T);
 
-        return hP && cP && tP;
+        return h >= 90.0 && h <= 111.0 && c > 16.0 && t < 65.0;
     }
 
-    /// <summary>
-    /// If color is disliked, lighten it to make it likable.
-    /// </summary>
-    public static Hct Fix(Hct hct) {
-        if(GetIsDisliked(hct))
-            return Hct.Parse(hct.H, hct.C, 70.0);
+    private static double LabInvf(double ft) {
+        double ft3 = ft * ft * ft;
 
-        return hct;
+        return ft3 > LAB_E ? ft3 : (116.0 * ft - 16.0) / LAB_KAPPA;
     }
 
-    public const uint GOOGLE_BLUE = 0xFF1b6ef3;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static void Mul3(double r, double g, double b, double[] m, out double x, out double y, out double z) {
+        x = r * m[0] + g * m[1] + b * m[2];
+        y = r * m[3] + g * m[4] + b * m[5];
+        z = r * m[6] + g * m[7] + b * m[8];
+    }
 }
