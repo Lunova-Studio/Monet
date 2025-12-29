@@ -1,10 +1,8 @@
-﻿using Monet.Shared.Media.ColorSpace;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
-using SixLabors.ImageSharp.Processing.Processors.Quantization;
-
-using Color = Avalonia.Media.Color;
+﻿using Avalonia;
+using Avalonia.Media;
+using Avalonia.Media.Imaging;
+using Monet.Shared.Media.ColorSpace;
+using Monet.Shared.Media.Quantize;
 
 namespace Monet.Avalonia.Extensions;
 
@@ -13,26 +11,47 @@ namespace Monet.Avalonia.Extensions;
 /// </summary>
 public static class QuantizeExtension {
     /// <summary>
-    /// 图像量化
+    /// 从图像中提取主要颜色（Primary Colors）
     /// </summary>
-    /// <returns>图像中提取出来的可能的对比度较高的 <see cref="Hct"/> 颜色</returns>
-    public static IEnumerable<Color> QuantizeAndGetPrimaryColors(this Image<Rgba32> bitmap, int maxColorCount = 5) {
-        var image = bitmap.Clone(ctx => ctx.Resize(512, 0).Quantize(new WuQuantizer(new QuantizerOptions { MaxColors = maxColorCount + 3 })));
-        var dictionary = new Dictionary<Rgba32, int>();
+    /// <param name="bitmap">输入图像（Rgba32 格式）。</param>
+    /// <param name="maxColorCount">希望提取的主色数量。</param>
+    /// <returns>按出现频率排序的主色列表。</returns>
+    public static IEnumerable<Color> ExtractPrimaryColors(this Bitmap bitmap, int maxColorCount = 5) {
+        var pixels = bitmap.ToPixelArray();
+        var primaryColors = CelebiQuantizer.Quantize(pixels, maxColorCount)
+            .OrderByDescending(x => x.Value)
+            .Select(x => Color.FromUInt32(x.Key));
 
-        // 统计每种颜色出现的频率
-        for (int i = 0; i < image.Width; i++) {
-            for (int j = 0; j < image.Height; j++) {
-                var key = image[i, j];
-                if (key.A != byte.MaxValue || key.R != byte.MaxValue || key.G != byte.MaxValue || key.B != byte.MaxValue) {
-                    if (!dictionary.TryAdd(key, 1))
-                        dictionary[key]++;
-                }
+        return primaryColors;
+    }
+
+    internal static uint[] ToPixelArray(this Bitmap bitmap) {
+        int width = bitmap.PixelSize.Width;
+        int height = bitmap.PixelSize.Height;
+        int stride = width * 4;
+
+        byte[] buffer = new byte[stride * height];
+
+        unsafe {
+            fixed (byte* ptr = buffer) {
+                var rect = new PixelRect(0, 0, width, height);
+                bitmap.CopyPixels(rect, (IntPtr)ptr, buffer.Length, stride);
             }
         }
-        
-        return dictionary.OrderByDescending(c => c.Value)
-            .Take(maxColorCount)
-            .Select(c => new Color(c.Key.A, c.Key.R, c.Key.G, c.Key.B));
+
+        uint[] pixels = new uint[width * height];
+        for (int i = 0; i < pixels.Length; i++) {
+            int offset = i * 4;
+
+            byte b = buffer[offset + 0];
+            byte g = buffer[offset + 1];
+            byte r = buffer[offset + 2];
+            byte a = buffer[offset + 3];
+
+            // BGRA -> ARGB (uint)
+            pixels[i] = ((uint)a << 24) | ((uint)r << 16) | ((uint)g << 8) | b;
+        }
+
+        return pixels;
     }
 }

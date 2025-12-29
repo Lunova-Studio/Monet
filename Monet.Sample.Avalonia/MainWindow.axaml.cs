@@ -2,20 +2,18 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using Avalonia.Styling;
 using Monet.Avalonia;
 using Monet.Avalonia.Extensions;
 using Monet.Shared.Enums;
-using Monet.Shared.Media.Scheme.Dynamic;
-using SixLabors.ImageSharp.PixelFormats;
 using System;
 using System.Linq;
-using Color = Avalonia.Media.Color;
 
 namespace Monet.Sample.Avalonia;
 
 public partial class MainWindow : Window {
-    private double level = 0.57;
+    private double level = 0.0;
     private MonetColors _monet = Application.Current.Styles[1] as MonetColors;
     private ResourceDictionary resources = null!;
     private Color defaultColor = Application.Current!.PlatformSettings!.GetColorValues().AccentColor1;
@@ -40,9 +38,8 @@ public partial class MainWindow : Window {
         if (res is null || res.Count is 0)
             return;
 
-        var result = SixLabors.ImageSharp.Image
-            .Load<Rgba32>(res[0].Path.LocalPath)
-            .QuantizeAndGetPrimaryColors()
+        var result = new Bitmap(res[0].Path.LocalPath)
+            .ExtractPrimaryColors()
             .First();
 
         defaultColor = result;
@@ -71,7 +68,7 @@ public partial class MainWindow : Window {
 
         switch (schemeComboBox.SelectedIndex) {
             case 0:
-                _monet.BuildScheme(Variant.Rainbow, defaultColor,level);
+                _monet.BuildScheme(Variant.Rainbow, defaultColor, level);
                 break;
             case 1:
                 _monet.BuildScheme(Variant.Content, defaultColor, level);
