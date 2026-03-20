@@ -1,23 +1,24 @@
 ﻿using Monet.Shared.Media.ColorSpace;
+using System.Runtime.CompilerServices;
 
 namespace Monet.Shared.Utilities.Calculator;
 
 public static class HctCalculator {
-    public static readonly double[,] SCALED_DISCOUNT_FROM_LINRGB = new double[,] {
-        {0.001200833568784504, 0.002389694492170889, 0.0002795742885861124},
-        {0.0005891086651375999, 0.0029785502573438758, 0.0003270666104008398},
-        {0.00010146692491640572, 0.0005364214359186694, 0.0032979401770712076}
-    };
+    private static readonly double[] SCALED_DISCOUNT_FROM_LINRGB = [
+        0.001200833568784504, 0.002389694492170889, 0.0002795742885861124,
+        0.0005891086651375999, 0.0029785502573438758, 0.0003270666104008398,
+        0.00010146692491640572, 0.0005364214359186694, 0.0032979401770712076
+    ];
 
-    public static readonly double[,] LINRGB_FROM_SCALED_DISCOUNT = new double[,] {
-        {1373.2198709594231, -1100.4251190754821, -7.278681089101213},
-        {-271.815969077903, 559.6580465940733, -32.46047482791194},
-        {1.9622899599665666, -57.173814538844006, 308.7233197812385}
-    };
+    private static readonly double[] LINRGB_FROM_SCALED_DISCOUNT = [
+        1373.2198709594231, -1100.4251190754821, -7.278681089101213,
+        -271.815969077903, 559.6580465940733, -32.46047482791194,
+        1.9622899599665666, -57.173814538844006, 308.7233197812385
+    ];
 
-    public static readonly double[] Y_FROM_LINRGB = [0.2126, 0.7152, 0.0722];
+    private static readonly double[] Y_FROM_LINRGB = [0.2126, 0.7152, 0.0722];
 
-    public static readonly double[] CRITICAL_PLANES = [
+    private static readonly double[] CRITICAL_PLANES = [
         0.015176349177441876,
         0.045529047532325624,
         0.07588174588720938,
@@ -275,138 +276,106 @@ public static class HctCalculator {
         99.55452497210776,
     ];
 
-    /// <summary>
-    ///  Sanitizes a small enough angle in radians.
-    /// </summary>
-    /// <param name="angle">angle An angle in radians; must not deviate too much from 0.</param>
-    /// <returns>A coterminal angle between 0 and 2pi.</returns>
-    public static double SanitizeRadians(double angle) {
-        return (angle + Math.PI * 8) % (Math.PI * 2);
+    private const double TWO_PI = Math.PI * 2.0;
+    private const double EIGHT_PI = Math.PI * 8.0;
+    private const double INV_2_4 = 1.0 / 2.4;
+    private const double INV_0_42 = 1.0 / 0.42;
+    private const double INV_0_9 = 1.0 / 0.9;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static void Mul3(double r, double g, double b, double[] m, out double o0, out double o1, out double o2) {
+        o0 = r * m[0] + g * m[1] + b * m[2];
+        o1 = r * m[3] + g * m[4] + b * m[5];
+        o2 = r * m[6] + g * m[7] + b * m[8];
     }
 
-    /// <summary>
-    /// Delinearizes an RGB component, returning a floating-point number.
-    /// </summary>
-    /// <param name="rgbComponent">rgbComponent 0.0 <= rgb_component <= 100.0, represents linear R/G/B channel</param>
-    /// <returns>0.0 <= output <= 255.0, color channel converted to regular RGB space</returns>
+    public static double SanitizeRadians(double angle)
+        => (angle + EIGHT_PI) % TWO_PI;
+
     public static double Delinearized(double rgbComponent) {
-        double normalized = rgbComponent / 100.0;
-        double delinearized = 0.0;
+        double x = rgbComponent / 100.0;
+        if (x <= 0.0031308)
+            return x * 12.92 * 255.0;
 
-        if (normalized <= 0.0031308)
-            delinearized = normalized * 12.92;
-        else
-            delinearized = 1.055 * Math.Pow(normalized, 1.0 / 2.4) - 0.055;
-
-        return delinearized * 255.0;
+        return (1.055 * Math.Pow(x, INV_2_4) - 0.055) * 255.0;
     }
 
-    public static double CromaticAdaptation(double component) {
-        double af = Math.Pow(Math.Abs(component), 0.42);
-        return MathUtil.SignNumber(component) * 400.0 * af / (af + 27.13);
+    public static double CromaticAdaptation(double c) {
+        double abs = Math.Abs(c);
+        double af = Math.Pow(abs, 0.42);
+        return MathUtil.SignNumber(c) * (400.0 * af / (af + 27.13));
     }
 
     public static double HueOf(this double[] linrgb) {
-        double[] scaledDiscount = MathUtil.MatrixMultiply(linrgb, SCALED_DISCOUNT_FROM_LINRGB);
-        double rA = CromaticAdaptation(scaledDiscount[0]);
-        double gA = CromaticAdaptation(scaledDiscount[1]);
-        double bA = CromaticAdaptation(scaledDiscount[2]);
+        double r = linrgb[0], g = linrgb[1], b = linrgb[2];
 
-        // redness-greenness
-        double a = (11.0 * rA + -12.0 * gA + bA) / 11.0;
+        Mul3(r, g, b, SCALED_DISCOUNT_FROM_LINRGB, out double sdR, out double sdG, out double sdB);
 
-        // yellowness-blueness
-        double b = (rA + gA - 2.0 * bA) / 9.0;
+        double rA = CromaticAdaptation(sdR);
+        double gA = CromaticAdaptation(sdG);
+        double bA = CromaticAdaptation(sdB);
 
-        return Math.Atan2(b, a);
+        double a = (11.0 * rA - 12.0 * gA + bA) / 11.0;
+        double bb = (rA + gA - 2.0 * bA) / 9.0;
+
+        return Math.Atan2(bb, a);
     }
 
-    public static bool InCyclicOrder(double a, double b, double c) {
-        double deltaAB = SanitizeRadians(b - a);
-        double deltaAC = SanitizeRadians(c - a);
-        return deltaAB < deltaAC;
-    }
+    public static bool InCyclicOrder(double a, double b, double c)
+        => SanitizeRadians(b - a) < SanitizeRadians(c - a);
 
-    public static double Intercept(double source, double mid, double target) {
-        return (mid - source) / (target - source);
-    }
+    public static double Intercept(double s, double m, double t)
+        => (m - s) / (t - s);
 
-    public static double[] LerpPoint(double[] source, double t, double[] target) {
-        return [
-            source[0] + (target[0] - source[0]) * t,
-            source[1] + (target[1] - source[1]) * t,
-            source[2] + (target[2] - source[2]) * t,
-        ];
-    }
+    public static double[] LerpPoint(double[] s, double t, double[] e)
+        => [s[0] + (e[0] - s[0]) * t, s[1] + (e[1] - s[1]) * t, s[2] + (e[2] - s[2]) * t];
 
-    public static double[] SetCoordinate(double[] source, double coordinate, double[] target, int axis) {
-        double t = Intercept(source[axis], coordinate, target[axis]);
-        return LerpPoint(source, t, target);
-    }
+    public static double[] SetCoordinate(double[] s, double c, double[] e, int axis)
+        => LerpPoint(s, Intercept(s[axis], c, e[axis]), e);
 
-    public static bool IsBounded(double x) {
-        return 0.0 <= x && x <= 100.0;
-    }
+    public static bool IsBounded(double x)
+        => x >= 0.0 && x <= 100.0;
 
     public static double[] NthVertex(double y, int n) {
-        double kR = Y_FROM_LINRGB[0];
-        double kG = Y_FROM_LINRGB[1];
-        double kB = Y_FROM_LINRGB[2];
+        double kR = Y_FROM_LINRGB[0], kG = Y_FROM_LINRGB[1], kB = Y_FROM_LINRGB[2];
 
-        double coordA = n % 4 <= 1 ? 0.0 : 100.0;
-        double coordB = n % 2 == 0 ? 0.0 : 100.0;
+        double A = n % 4 <= 1 ? 0.0 : 100.0;
+        double B = n % 2 == 0 ? 0.0 : 100.0;
 
         if (n < 4) {
-            double g = coordA,
-                b = coordB,
-                r = (y - g * kG - b * kB) / kR;
-
-            if (IsBounded(r))
-                return [r, g, b];
-            else
-                return [-1.0, -1.0, -1.0];
-        } else if (n < 8) {
-            double b = coordA,
-                r = coordB,
-                g = (y - r * kR - b * kB) / kG;
-
-            if (IsBounded(g))
-                return [r, g, b];
-            else
-                return [-1.0, -1.0, -1.0];
+            double g = A, b = B;
+            double r = (y - g * kG - b * kB) / kR;
+            return IsBounded(r) ? [r, g, b] : [-1.0, -1.0, -1.0];
+        }
+        if (n < 8) {
+            double b = A, r = B;
+            double g = (y - r * kR - b * kB) / kG;
+            return IsBounded(g) ? [r, g, b] : [-1.0, -1.0, -1.0];
         } else {
-            double r = coordA,
-                g = coordB,
-                b = (y - r * kR - g * kG) / kB;
-
-            if (IsBounded(b))
-                return [r, g, b];
-            else
-                return [-1.0, -1.0, -1.0];
+            double r = A, g = B;
+            double b = (y - r * kR - g * kG) / kB;
+            return IsBounded(b) ? [r, g, b] : [-1.0, -1.0, -1.0];
         }
     }
 
     public static double[][] BisectToSegment(double y, double targetHue) {
-        double[] left = [-1.0, -1.0, -1.0];
-        double[] right = left;
-        double leftHue = 0.0;
-        double rightHue = 0.0;
-        bool initialized = false;
-        bool uncut = true;
+        double[] left = null, right = null;
+        double leftHue = 0, rightHue = 0;
+        bool init = false, uncut = true;
+
         for (int n = 0; n < 12; n++) {
             double[] mid = NthVertex(y, n);
-            if (mid[0] < 0) {
-                continue;
-            }
+            if (mid[0] < 0) continue;
+
             double midHue = mid.HueOf();
-            if (!initialized) {
-                left = mid;
-                right = mid;
-                leftHue = midHue;
-                rightHue = midHue;
-                initialized = true;
+
+            if (!init) {
+                left = right = mid;
+                leftHue = rightHue = midHue;
+                init = true;
                 continue;
             }
+
             if (uncut || InCyclicOrder(leftHue, midHue, rightHue)) {
                 uncut = false;
                 if (InCyclicOrder(leftHue, targetHue, midHue)) {
@@ -418,59 +387,52 @@ public static class HctCalculator {
                 }
             }
         }
+
         return [left, right];
     }
 
-    public static double[] MidPoint(double[] a, double[] b) {
-        return [
-            (a[0] + b[0]) / 2,
-            (a[1] + b[1]) / 2,
-            (a[2] + b[2]) / 2,
-        ];
-    }
+    public static double[] MidPoint(double[] a, double[] b)
+        => [(a[0] + b[0]) * 0.5, (a[1] + b[1]) * 0.5, (a[2] + b[2]) * 0.5];
 
-    public static int CriticalPlaneBelow(double x) {
-        return (int)Math.Floor(x - 0.5);
-    }
+    public static int CriticalPlaneBelow(double x)
+        => (int)Math.Floor(x - 0.5);
 
-    public static int CriticalPlaneAbove(double x) {
-        return (int)Math.Ceiling(x - 0.5);
-    }
+    public static int CriticalPlaneAbove(double x)
+        => (int)Math.Ceiling(x - 0.5);
 
     public static double[] BisectToLimit(double y, double targetHue) {
-        double[][] segment = BisectToSegment(y, targetHue);
-        double[] left = segment[0];
+        double[][] seg = BisectToSegment(y, targetHue);
+        double[] left = seg[0], right = seg[1];
         double leftHue = left.HueOf();
-        double[] right = segment[1];
 
         for (int axis = 0; axis < 3; axis++) {
-            if (left[axis] != right[axis]) {
-                int lPlane = -1;
-                int rPlane = 255;
-                if (left[axis] < right[axis]) {
-                    lPlane = CriticalPlaneBelow(Delinearized(left[axis]));
-                    rPlane = CriticalPlaneAbove(Delinearized(right[axis]));
+            if (left[axis] == right[axis]) continue;
+
+            int lPlane, rPlane;
+
+            if (left[axis] < right[axis]) {
+                lPlane = CriticalPlaneBelow(Delinearized(left[axis]));
+                rPlane = CriticalPlaneAbove(Delinearized(right[axis]));
+            } else {
+                lPlane = CriticalPlaneAbove(Delinearized(left[axis]));
+                rPlane = CriticalPlaneBelow(Delinearized(right[axis]));
+            }
+
+            for (int i = 0; i < 8; i++) {
+                if (Math.Abs(rPlane - lPlane) <= 1) break;
+
+                int mPlane = (lPlane + rPlane) >> 1;
+                double midCoord = CRITICAL_PLANES[mPlane];
+                double[] mid = SetCoordinate(left, midCoord, right, axis);
+                double midHue = mid.HueOf();
+
+                if (InCyclicOrder(leftHue, targetHue, midHue)) {
+                    right = mid;
+                    rPlane = mPlane;
                 } else {
-                    lPlane = CriticalPlaneAbove(Delinearized(left[axis]));
-                    rPlane = CriticalPlaneBelow(Delinearized(right[axis]));
-                }
-                for (int i = 0; i < 8; i++) {
-                    if (Math.Abs(rPlane - lPlane) <= 1) {
-                        break;
-                    } else {
-                        int mPlane = (int)Math.Floor((lPlane + rPlane) / 2.0);
-                        double midPlaneCoordinate = CRITICAL_PLANES[mPlane];
-                        double[] mid = SetCoordinate(left, midPlaneCoordinate, right, axis);
-                        double midHue = mid.HueOf();
-                        if (InCyclicOrder(leftHue, targetHue, midHue)) {
-                            right = mid;
-                            rPlane = mPlane;
-                        } else {
-                            left = mid;
-                            leftHue = midHue;
-                            lPlane = mPlane;
-                        }
-                    }
+                    left = mid;
+                    leftHue = midHue;
+                    lPlane = mPlane;
                 }
             }
         }
@@ -478,67 +440,65 @@ public static class HctCalculator {
         return MidPoint(left, right);
     }
 
-    public static double InverseChromaticAdaptation(double adapted) {
-        double adaptedAbs = Math.Abs(adapted);
-        double value = Math.Max(0, 27.13 * adaptedAbs / (400.0 - adaptedAbs));
-        return MathUtil.SignNumber(adapted) * Math.Pow(value, 1.0 / 0.42);
+    public static double InverseChromaticAdaptation(double a) {
+        double abs = Math.Abs(a);
+        double v = Math.Max(0.0, 27.13 * abs / (400.0 - abs));
+        return MathUtil.SignNumber(a) * Math.Pow(v, INV_0_42);
     }
 
-    public static uint FindResultByJ(double hueRadians, double chroma, double y) {
-        // Initial estimate of j
+    public static uint FindResultByJ(double hue, double chroma, double y) {
         double j = Math.Sqrt(y) * 11.0;
 
-        // Operations inlined from Cam16 to avoid repeated calculation
-        ViewingConditions viewingConditions = ViewingConditions.Default;
-        double tInnerCoeff = 1 / Math.Pow(1.64 - Math.Pow(0.29, viewingConditions.N), 0.73);
-        double eHue = 0.25 * (Math.Cos(hueRadians + 2.0) + 3.8);
-        double p1 = eHue * (50000.0 / 13.0) * viewingConditions.Nc * viewingConditions.Ncb;
-        double hSin = Math.Sin(hueRadians);
-        double hCos = Math.Cos(hueRadians);
+        ViewingConditions vc = ViewingConditions.Default;
 
-        for (int iterationRound = 0; iterationRound < 5; iterationRound++) {
-            // Operations inlined from Cam16 to avoid repeated calculation
-            double jNormalized = j / 100.0;
-            double alpha = chroma == 0.0 || j == 0.0 ? 0.0 : chroma / Math.Sqrt(jNormalized);
-            double t = Math.Pow(alpha * tInnerCoeff, 1.0 / 0.9);
-            double ac = viewingConditions.Aw * Math.Pow(jNormalized, 1.0 / viewingConditions.C / viewingConditions.Z);
-            double p2 = ac / viewingConditions.Nbb;
-            double gamma = 23.0 * (p2 + 0.305) * t / (23.0 * p1 + 11 * t * hCos + 108.0 * t * hSin);
-            double a = gamma * hCos;
-            double b = gamma * hSin;
+        double tInner = 1.0 / Math.Pow(1.64 - Math.Pow(0.29, vc.N), 0.73);
+        double eHue = 0.25 * (Math.Cos(hue + 2.0) + 3.8);
+        double p1 = eHue * (50000.0 / 13.0) * vc.Nc * vc.Ncb;
+
+        double sinH = Math.Sin(hue), cosH = Math.Cos(hue);
+
+        double kR = Y_FROM_LINRGB[0], kG = Y_FROM_LINRGB[1], kB = Y_FROM_LINRGB[2];
+
+        for (int i = 0; i < 5; i++) {
+            double jNorm = j / 100.0;
+            double alpha = (chroma == 0.0 || j == 0.0) ? 0.0 : chroma / Math.Sqrt(jNorm);
+
+            double t = Math.Pow(alpha * tInner, INV_0_9);
+            double ac = vc.Aw * Math.Pow(jNorm, 1.0 / vc.C / vc.Z);
+            double p2 = ac / vc.Nbb;
+
+            double gamma = 23.0 * (p2 + 0.305) * t /
+                           (23.0 * p1 + 11.0 * t * cosH + 108.0 * t * sinH);
+
+            double a = gamma * cosH;
+            double b = gamma * sinH;
+
             double rA = (460.0 * p2 + 451.0 * a + 288.0 * b) / 1403.0;
             double gA = (460.0 * p2 - 891.0 * a - 261.0 * b) / 1403.0;
             double bA = (460.0 * p2 - 220.0 * a - 6300.0 * b) / 1403.0;
 
-            double rCScaled = InverseChromaticAdaptation(rA);
-            double gCScaled = InverseChromaticAdaptation(gA);
-            double bCScaled = InverseChromaticAdaptation(bA);
+            double rC = InverseChromaticAdaptation(rA);
+            double gC = InverseChromaticAdaptation(gA);
+            double bC = InverseChromaticAdaptation(bA);
 
-            double[] linrgb = MathUtil.MatrixMultiply([rCScaled, gCScaled, bCScaled], LINRGB_FROM_SCALED_DISCOUNT);
+            Mul3(rC, gC, bC, LINRGB_FROM_SCALED_DISCOUNT, out double lr, out double lg, out double lb);
 
-            if (linrgb[0] < 0 || linrgb[1] < 0 || linrgb[2] < 0) {
+            if (lr < 0 || lg < 0 || lb < 0)
                 return 0;
-            }
 
-            double kR = Y_FROM_LINRGB[0];
-            double kG = Y_FROM_LINRGB[1];
-            double kB = Y_FROM_LINRGB[2];
-            double fnj = kR * linrgb[0] + kG * linrgb[1] + kB * linrgb[2];
+            double fnj = kR * lr + kG * lg + kB * lb;
 
-            if (fnj <= 0) {
+            if (fnj <= 0)
                 return 0;
-            }
 
-            if (iterationRound == 4 || Math.Abs(fnj - y) < 0.002) {
-                if (linrgb[0] > 100.01 || linrgb[1] > 100.01 || linrgb[2] > 100.01) {
+            if (i == 4 || Math.Abs(fnj - y) < 0.002) {
+                if (lr > 100.01 || lg > 100.01 || lb > 100.01)
                     return 0;
-                }
-                return ColorUtil.LinrgbToArgb(linrgb);
+
+                return ColorUtil.LinrgbToArgb([lr, lg, lb]);
             }
 
-            // Iterates with Newton method
-            // Using 2 * fn(j) / j as the approximation of fn'(j)
-            j = j - (fnj - y) * j / (2 * fnj);
+            j -= (fnj - y) * j / (2.0 * fnj);
         }
 
         return 0;
@@ -549,18 +509,17 @@ public static class HctCalculator {
             return ColorUtil.ArgbFromLstar(lstar);
 
         hueDegrees = MathUtil.SanitizeDegrees(hueDegrees);
-        double hueRadians = hueDegrees / 180 * Math.PI;
+        double hue = hueDegrees * Math.PI / 180.0;
         double y = ColorUtil.YFromLstar(lstar);
-        uint exactAnswer = FindResultByJ(hueRadians, chroma, y);
 
-        if (exactAnswer != 0)
-            return exactAnswer;
+        uint exact = FindResultByJ(hue, chroma, y);
+        if (exact != 0)
+            return exact;
 
-        double[] linrgb = BisectToLimit(y, hueRadians);
+        double[] linrgb = BisectToLimit(y, hue);
         return ColorUtil.LinrgbToArgb(linrgb);
     }
 
-    public static Cam16 SolveToCam16(double hueDegrees, double chroma, double lstar) {
-        return Cam16.Parse(SolveToUint(hueDegrees, chroma, lstar));
-    }
+    public static Cam16 SolveToCam16(double hueDegrees, double chroma, double lstar)
+        => Cam16.Parse(SolveToUint(hueDegrees, chroma, lstar));
 }

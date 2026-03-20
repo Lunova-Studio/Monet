@@ -8,7 +8,7 @@ namespace Monet.Shared.Media.Scheme.Dynamic;
 public sealed class FruitSaladScheme(Hct hct, bool isDark, double contrastLevel) : DynamicScheme(
     hct,
     isDark,
-    Variant.Fruit_Salad,
+    Variant.FruitSalad,
     contrastLevel,
     TonalPalette.CreateFromHueChroma(MathUtil.SanitizeDegrees(hct.H - 50.0), 48.0),
     TonalPalette.CreateFromHueChroma(MathUtil.SanitizeDegrees(hct.H - 50.0), 16.0),

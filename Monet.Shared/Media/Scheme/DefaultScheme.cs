@@ -51,6 +51,8 @@ public sealed class DefaultScheme : IColorValueScheme {
     public required uint ScrimColorValue { get; set; }
     public required uint ShadowColorValue { get; set; }
 
+    public IDictionary<string, uint> Resources => new Dictionary<string, uint>();
+
     #endregion
 
     /// <summary>

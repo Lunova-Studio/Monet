@@ -4,11 +4,11 @@ public enum Variant {
     Default,
     Monochrome,
     Neutral,
-    Tonal_Spot,
+    TonalSpot,
     Vibrant,
     Expressive,
     Fidelity,
     Content,
     Rainbow,
-    Fruit_Salad,
+    FruitSalad,
 }

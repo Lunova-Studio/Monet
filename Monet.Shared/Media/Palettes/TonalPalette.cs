@@ -17,7 +17,7 @@ public sealed class TonalPalette {
         C = c;
         KeyColor = keyColor;
 
-        _cache = [];
+        _cache = new Dictionary<int, uint>(32);
     }
 
     /// <summary>
@@ -55,11 +55,11 @@ public sealed class TonalPalette {
     /// <param name="tone">HCT tone, measured from 0 to 100.</param>
     /// <returns>ARGB representation of a color with that tone.</returns>
     public uint CreateFromTone(int tone) {
-        if (!_cache.TryGetValue(tone, out uint color)) {
-            color = Hct.Parse(H, C, tone).ToUInt32();
-            _cache.Add(tone, color);
-        }
+        if (_cache.TryGetValue(tone, out uint color))
+            return color;
 
+        color = Hct.Parse(H, C, tone).ToUInt32();
+        _cache[tone] = color;
         return color;
     }
 
@@ -76,7 +76,7 @@ public sealed class TonalPalette {
 /// Key color is a color that represents the hue and chroma of a tonal palette.
 /// </summary>
 internal readonly struct KeyColor {
-    private readonly Dictionary<int, double> _chromaCache = [];
+    private readonly Dictionary<int, double> _chromaCache;
 
     private const double MAX_CHROMA = 200.0;
 
@@ -86,6 +86,7 @@ internal readonly struct KeyColor {
     public KeyColor(double h, double requestedC) {
         H = h;
         RequestedC = requestedC;
+        _chromaCache = new Dictionary<int, double>(64);
     }
 
     /// <summary>
@@ -106,34 +107,39 @@ internal readonly struct KeyColor {
         while (lowerTone < upperTone) {
             int midTone = (lowerTone + upperTone) / 2;
 
-            bool isAscending = MaxChroma(midTone) < MaxChroma(midTone + toneStepSize);
-            bool sufficientC = MaxChroma(midTone) >= RequestedC - epsilon;
+            // 优化：避免重复计算 MaxChroma
+            double cMid = MaxChroma(midTone);
+            double cNext = MaxChroma(midTone + toneStepSize);
 
-            if (sufficientC)
-                if (Math.Abs(lowerTone - pivotTone) < Math.Abs(upperTone - pivotTone))
+            bool isAscending = cMid < cNext;
+            bool sufficientC = cMid >= RequestedC - epsilon;
+
+            if (sufficientC) {
+                if (Math.Abs(lowerTone - pivotTone) < Math.Abs(upperTone - pivotTone)) {
                     upperTone = midTone;
-                else {
+                } else {
                     if (lowerTone == midTone)
                         return Hct.Parse(H, RequestedC, lowerTone);
 
                     lowerTone = midTone;
                 }
-            else
+            } else {
                 if (isAscending)
-                lowerTone = midTone + toneStepSize;
-            else
-                upperTone = midTone;
+                    lowerTone = midTone + toneStepSize;
+                else
+                    upperTone = midTone;
+            }
         }
 
         return Hct.Parse(H, RequestedC, lowerTone);
     }
 
     private readonly double MaxChroma(int tone) {
-        if (!_chromaCache.TryGetValue(tone, out var value)) {
-            value = Hct.Parse(H, MAX_CHROMA, tone).C;
-            _chromaCache[tone] = value;
-        }
+        if (_chromaCache.TryGetValue(tone, out var value))
+            return value;
 
+        value = Hct.Parse(H, MAX_CHROMA, tone).C;
+        _chromaCache[tone] = value;
         return value;
     }
 }

@@ -11,7 +11,7 @@ namespace Monet.Shared.Media.Scheme.Dynamic;
 public sealed class TonalSpotScheme(Hct hct, bool isDark, double contrastLevel) : DynamicScheme(
     hct,
     isDark, 
-    Variant.Tonal_Spot, 
+    Variant.TonalSpot, 
     contrastLevel,
     TonalPalette.CreateFromHueChroma(hct.H, 36.0),
     TonalPalette.CreateFromHueChroma(hct.H, 16.0),
