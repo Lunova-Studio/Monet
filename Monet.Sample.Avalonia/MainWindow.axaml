@@ -126,13 +126,13 @@
 			<ComboBox Name="schemeComboBox">
 				<ComboBoxItem Content="Rainbow"/>
 				<ComboBoxItem Content="Content"/>
-				<ComboBoxItem Content="Fruit_Salad"/>
+				<ComboBoxItem Content="FruitSalad"/>
 				<ComboBoxItem Content="Vibrant"/>
 				<ComboBoxItem Content="Neutral"/>
 				<ComboBoxItem Content="Fidelity"/>
 				<ComboBoxItem Content="Expressive"/>
 				<ComboBoxItem Content="Monochrome"/>
-				<ComboBoxItem Content="Tonal_Spot"/>
+				<ComboBoxItem Content="TonalSpot"/>
 			</ComboBox>
 
 			<TextBlock Margin="16 0 0 0"

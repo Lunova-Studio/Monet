@@ -43,7 +43,6 @@ public partial class MainWindow : Window {
 
         defaultColor = result;
         Text_Test.Text = res[0].Path.LocalPath;
-
         Change(change.IsChecked ?? true);
     }
 
