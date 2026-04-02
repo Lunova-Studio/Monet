@@ -17,11 +17,11 @@ public sealed class MonetColors : Styles, IMonet {
     private bool _isColorMatch = true;
     private ResourceDictionary _resource = null!;
 
-    private static IPlatformSettings PlatformSettings => Application.Current!.PlatformSettings!;
-
     public Variant CurrentVariant { get; private set; }
     public IColorValueScheme? DesignTokens { get; private set; }
-    public bool IsDarkMode { get; set; } = PlatformSettings.GetColorValues().ThemeVariant is PlatformThemeVariant.Dark;
+
+    public bool IsDarkMode { get; set; } = 
+        Application.Current?.ActualThemeVariant?.Key.ToString() == "Dark";
 
     public bool IsColorMatch {
         get => _isColorMatch;
