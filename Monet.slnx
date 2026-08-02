@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Monet.Avalonia/Monet.Avalonia.csproj" />
+  <Project Path="Monet.Sample.Avalonia/Monet.Sample.Avalonia.csproj" />
+  <Project Path="Monet.Shared/Monet.Shared.csproj" />
+</Solution>
