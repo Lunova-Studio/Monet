@@ -14,7 +14,7 @@ namespace Monet.Sample.Avalonia;
 
 public partial class MainWindow : Window {
     private double level = 0.0;
-    private readonly MonetColors _monet = (Application.Current!.Styles[1] as MonetColors)!;
+    private readonly MonetPalette _monet = (Application.Current!.Styles[1] as MonetPalette)!;
     private Color defaultColor = Application.Current!.PlatformSettings!.GetColorValues().AccentColor1;
 
     public MainWindow() {
@@ -52,9 +52,7 @@ public partial class MainWindow : Window {
     }
 
     private void Change_IsCheckedChanged(object? sender, RoutedEventArgs e) {
-        _monet.IsColorMatch = true;
-        _monet.IsDarkMode = change.IsChecked ?? true;
-        Change(_monet.IsDarkMode);
+        Change(change.IsChecked.Value);
     }
 
     private void SchemeComboBox_SelectionChanged(object? sender, SelectionChangedEventArgs e) {
@@ -66,33 +64,31 @@ public partial class MainWindow : Window {
 
         switch (schemeComboBox.SelectedIndex) {
             case 0:
-                _monet.BuildScheme(Variant.Rainbow, defaultColor, level);
+                _monet.Build(Variant.Rainbow, defaultColor, level);
                 break;
             case 1:
-                _monet.BuildScheme(Variant.Content, defaultColor, level);
+                _monet.Build(Variant.Content, defaultColor, level);
                 break;
             case 2:
-                _monet.BuildScheme(Variant.FruitSalad, defaultColor, level);
+                _monet.Build(Variant.FruitSalad, defaultColor, level);
                 break;
             case 3:
-                _monet.BuildScheme(Variant.Vibrant, defaultColor, level);
+                _monet.Build(Variant.Vibrant, defaultColor, level);
                 break;
             case 4:
-                _monet.BuildScheme(Variant.Neutral, defaultColor, level);
+                _monet.Build(Variant.Neutral, defaultColor, level);
                 break;
             case 5:
-                _monet.BuildScheme(Variant.Fidelity, defaultColor, level);
+                _monet.Build(Variant.Fidelity, defaultColor, level);
                 break;
             case 6:
-                _monet.BuildScheme(Variant.Expressive, defaultColor, level);
+                _monet.Build(Variant.Expressive, defaultColor, level);
                 break;
             case 7:
-                _monet.BuildScheme(Variant.Monochrome, defaultColor, level);
+                _monet.Build(Variant.Monochrome, defaultColor, level);
                 break;
             case 8:
-                _monet.BuildScheme(Variant.TonalSpot, defaultColor, level);
-                break;
-            default:
+                _monet.Build(Variant.TonalSpot, defaultColor, level);
                 break;
         }
     }

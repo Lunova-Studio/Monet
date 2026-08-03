@@ -5,6 +5,6 @@
              RequestedThemeVariant="Default">
     <Application.Styles>
         <FluentTheme />
-		<m:MonetColors/>
+		<m:MonetPalette/>
     </Application.Styles>
 </Application>

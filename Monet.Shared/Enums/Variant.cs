@@ -1,10 +1,9 @@
 ﻿namespace Monet.Shared.Enums;
 
 public enum Variant {
-    Default,
     Monochrome,
     Neutral,
-    TonalSpot,
+    TonalSpot, //Default
     Vibrant,
     Expressive,
     Fidelity,
